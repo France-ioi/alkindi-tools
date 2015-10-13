@@ -1,0 +1,14 @@
+{
+   "name": "alkindi-tools",
+   "repository": {
+      "type": "git",
+      "url": "https://github.com/France-ioi/alkindi-tools.git"
+   },
+   "bugs": {
+      "url": "https://github.com/France-ioi/alkindi-tools/issues"
+   },
+   "license": "MIT",
+   "dependencies": {
+      "jquery": "latest"
+   }
+}

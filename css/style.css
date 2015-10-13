@@ -1,0 +1,86 @@
+.container {
+    display: block;
+    position: relative;
+    margin-left: 50px;
+}
+
+.wrapper {
+    display: block;
+    position: relative;
+    min-width: 300px;
+    max-width: 1000px;
+}
+
+.title {
+    display: inline-block;
+    position: relative;
+    font-size: 24px;
+}
+
+.section {
+    display: block;
+    margin-top: 20px;
+}
+
+.section-title {
+    display: inline-block;
+    position: relative;
+    font-size: 20px;
+}
+
+.textarea-wrapper {
+    display: inline-block;
+    position: relative;
+    vertical-align: top;
+}
+
+.options-wrapper {
+    display: inline-block;
+    position: relative;
+    vertical-align: top;
+    margin-left: 30px;
+}
+
+.options-title {
+
+}
+
+.textarea-input,
+.textarea-output {
+    margin-top: 10px;
+    width: 400px;
+    height: 100px;
+    resize: none;
+}
+
+.checkbox-option {
+    display: block;
+}
+
+.chart-wrapper {
+    display: inline-block;
+    position: relative;
+    vertical-align: top;
+}
+
+.chart-text,
+.chart-ref {
+    width: 400px;
+    height: 300px;
+}
+
+.display-order-wrapper {
+    display: inline-block;
+    position: relative;
+    vertical-align: top;
+    margin-left: 30px;
+    margin-top: 20px;
+}
+
+.display-order-title {
+}
+
+.display-order-item {
+    display: block;
+    position: relative;
+}

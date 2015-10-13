@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="fr">
+   <head>
+      <meta charset="utf-8">
+      <title>Alkindi Tools</title>
+      <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
+      <script type="text/javascript" src="js/tools.js"></script>
+      <script src="http://code.highcharts.com/highcharts.js"></script>
+      <script src="http://code.highcharts.com/modules/exporting.js"></script>
+
+      <link type="text/css" rel="stylesheet" href="css/style.css">
+   </head>
+   <body>
+     <div class="container">
+       <div class="wrapper">
+	 <div>
+	   <span class="title">Analyse de fréquence</span>
+	 </div>
+
+	 <div class="section">
+	   <div>
+	     <span class="section-title">Texte à analyser : </span>
+	   </div>
+	   <div>
+	     <span class="textarea-wrapper">
+	       <textarea class="textarea-input"></textarea>
+	     </span>
+	     <span>
+	       <div class="options-wrapper">
+		 <div class="options-title">Options :</div>
+		 <div>
+		   <div class="checkbox-option">
+		     <input type="checkbox">inclure les espaces</input>
+		   </div>
+
+		   <div class="checkbox-option">
+		     <input type="checkbox">inclure la ponctuation</input>
+		   </div>
+
+		   <div class="checkbox-option">
+		     <input type="checkbox">inclure les accents</input>
+		   </div>
+
+		   <div class="checkbox-option">
+		     <input type="checkbox">inclure les chiffres</input>
+		   </div>
+
+		   <div class="checkbox-option">
+		     <input type="checkbox">différencier les majuscules</input>
+		   </div>
+		 </div>
+	       </div>
+	     </span>
+	   </div>
+	 </div>
+
+	 <div class="section">
+	   <div>
+	     <span class="section-title">Analyse de fréquence du texte : </span>
+	   </div>
+	   <div>
+	     <div class="chart-wrapper">
+	       <div id="chart-text" class="chart-text"></div>
+	     </div>
+
+
+	     <div class="display-order-wrapper">
+	       <div class="display-order-title">Ordre d'affichage :</div>
+	       <div>
+		 <form>
+		   <div class="display-order-item">
+		     <input type="radio" value="alpha" checked>alphabétique</input>
+		   </div>
+		   <div class="display-order-item">
+		     <input type="radio" value="fqz">fréquence décroissante</input>
+		   </div>
+		 </form>
+	       </div>
+	     </div>
+
+
+	   </div>
+	 </div>
+
+	 <div class="section">
+	   <div>
+	     <span class="section-title">Fréquence de référence : </span>
+	   </div>
+	   <div>
+	     <div class="chart-wrapper">
+	       <div id="chart-ref" class="chart-ref"></div>
+	     </div>
+
+	   </div>
+	 </div>
+
+
+	 <div class="section">
+	   <div>
+	     <span class="section-title">Substitution générée : </span>
+	   </div>
+	   <div>
+	   </div>
+	 </div>
+
+
+	 <div class="section">
+	   <div>
+	     <span class="section-title">Texte après substitution : </span>
+	   </div>
+	   <div>
+	     <span class="textarea-wrapper">
+	       <textarea class="textarea-output"></textarea>
+	     </span>
+	   </div>
+	 </div>
+
+
+       </div>
+     </div>
+   </body>
+</html>
