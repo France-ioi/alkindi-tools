@@ -9,6 +9,7 @@
    },
    "license": "MIT",
    "dependencies": {
-      "jquery": "latest"
+       "jquery": "latest",
+       "highcharts": "latest"
    }
 }

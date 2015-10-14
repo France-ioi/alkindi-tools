@@ -48,7 +48,7 @@
 .textarea-input,
 .textarea-output {
     margin-top: 10px;
-    width: 400px;
+    width: 600px;
     height: 100px;
     resize: none;
 }
@@ -65,7 +65,7 @@
 
 .chart-text,
 .chart-ref {
-    width: 400px;
+    width: 600px;
     height: 300px;
 }
 

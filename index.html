@@ -4,10 +4,10 @@
       <meta charset="utf-8">
       <title>Alkindi Tools</title>
       <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
+      <script type="text/javascript" src="bower_components/highcharts/highcharts.js"></script>
+      <script type="text/javascript" src="bower_components/highcharts/modules/exporting.js"></script>
       <script type="text/javascript" src="js/tools.js"></script>
-      <script src="http://code.highcharts.com/highcharts.js"></script>
-      <script src="http://code.highcharts.com/modules/exporting.js"></script>
-
+      <script type="text/javascript" src="js/charts.js"></script>
       <link type="text/css" rel="stylesheet" href="css/style.css">
    </head>
    <body>
@@ -23,30 +23,33 @@
 	   </div>
 	   <div>
 	     <span class="textarea-wrapper">
-	       <textarea class="textarea-input"></textarea>
+	       <textarea id="textarea-input" class="textarea-input"></textarea>
+	       <div>
+		 <button id="apply-input">Appliquer</button>
+	       </div>
 	     </span>
 	     <span>
 	       <div class="options-wrapper">
 		 <div class="options-title">Options :</div>
 		 <div>
 		   <div class="checkbox-option">
-		     <input type="checkbox">inclure les espaces</input>
+		     <input id="optionWithSpace" type="checkbox">inclure les espaces</input>
 		   </div>
 
 		   <div class="checkbox-option">
-		     <input type="checkbox">inclure la ponctuation</input>
+		     <input  id="optionWithPunctuation" type="checkbox">inclure la ponctuation</input>
 		   </div>
 
 		   <div class="checkbox-option">
-		     <input type="checkbox">inclure les accents</input>
+		     <input  id="optionWithAccent" type="checkbox">inclure les accents</input>
 		   </div>
 
 		   <div class="checkbox-option">
-		     <input type="checkbox">inclure les chiffres</input>
+		     <input  id="optionWithDigit" type="checkbox">inclure les chiffres</input>
 		   </div>
 
 		   <div class="checkbox-option">
-		     <input type="checkbox">différencier les majuscules</input>
+		     <input id="optionWithUpperCase" type="checkbox">différencier les majuscules</input>
 		   </div>
 		 </div>
 	       </div>
@@ -110,7 +113,7 @@
 	   </div>
 	   <div>
 	     <span class="textarea-wrapper">
-	       <textarea class="textarea-output"></textarea>
+	       <textarea id="textarea-output" class="textarea-output" readonly></textarea>
 	     </span>
 	   </div>
 	 </div>
