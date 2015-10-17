@@ -1,5 +1,37 @@
 var sLimitRef = 20;
 var sMapLang = new Map();
+var sObjects = null;
+var sKeys = null;
+var sData = null;
+var sLastAlpha = true;
+
+function generateChartsContent(iTitle, iKeys, iData) {
+    var lContent = {
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: iTitle
+        },
+        xAxis: {
+            categories: iKeys,
+            crosshair: true
+        },
+        tooltip: {
+            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                '<td style="padding:0"><b>{point.y:1f} %</b></td></tr>',
+            footerFormat: '</table>',
+            shared: true,
+            useHTML: true
+        },
+        series: [{
+            name: 'fréquence',
+            data: iData
+        }]
+    };
+    return lContent;
+}
 
 function initRefLang() {
     // src https://fr.wikipedia.org/wiki/Fr%C3%A9quence_d%27apparition_des_lettres_en_fran%C3%A7ais
@@ -177,54 +209,17 @@ function sortFrq(iObjects, iWithKey) {
     });
 }
 
-function computeContentChartFrq(iMapFrq) {
-    var lKeys = new Array();
-    var lData = new Array();
+function computeObjects(iMapFrq) {
+    sKeys = new Array();
+    sData = new Array();
+    sObjects = new Array();
     var lSize = iMapFrq.size;
 
-    var lObjects = new Array();
+    sObjects = [];
     iMapFrq.map.forEach(function (value, key) {
-	var lV = value / lSize * 100;
-	lObjects.push({key: key, value: lV});
+	var lV = value / lSize * 100 ;
+	sObjects.push({key: key, value: lV});
     });
-
-    sortFrq(lObjects, sFrqAlpha);
-
-    for (var i = 0, len = lObjects.length; i < len; i++) {
-	var lItem = lObjects[i];
-
-	lKeys.push(lItem.key);
-	lData.push(lItem.value);
-    }
-
-    iMapFrq.map.forEach(function (value, key) {
-    });
-
-    var lContent = {
-        chart: {
-            type: 'column'
-        },
-        title: {
-            text: 'Analyse de fréquence du texte'
-        },
-        xAxis: {
-            categories: lKeys,
-            crosshair: true
-        },
-        tooltip: {
-            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                '<td style="padding:0"><b>{point.y:1f} %</b></td></tr>',
-            footerFormat: '</table>',
-            shared: true,
-            useHTML: true
-        },
-        series: [{
-            name: 'fréquence',
-            data: lData
-        }]
-    };
-    return lContent;
 }
 
 function clickApplyInput() {
@@ -247,21 +242,37 @@ function clickApplyInput() {
     var lTokens = textToTokens(lTextInput, lOptions);
     var lMapFrq = computeMapFrq(lTokens);
 
-    var lContentChartFrq = computeContentChartFrq(lMapFrq);
-    $('#chart-text').highcharts(lContentChartFrq);
+    computeObjects(lMapFrq);
+    sLastAlpha = $('input[name="frq"]:checked').val() === "alpha";
+    updateChartText();
 
     var lTextOutput = tokensToText(lTokens);
     $('textarea#textarea-output').val(lTextOutput);
 }
 
-function clickFrqAlpha() {
-    sFrqFqz = true;
-    $('#frq-fqz').attr('checked, false');
+function updateChartText() {
+    if (sObjects !== undefined &&
+	sObjects != null) {
+	sortFrq(sObjects, sLastAlpha);
+
+	sKeys = [];
+	sData = [];
+	for (var i = 0, len = sObjects.length; i < len; i++) {
+	    var lItem = sObjects[i];
+	    sKeys.push(lItem.key);
+	    sData.push(lItem.value);
+	}
+    }
+    var lContent = generateChartsContent('Analyse de fréquence du texte', sKeys, sData);
+    $('#chart-text').highcharts(lContent);
 }
 
-function clickFrqFqz() {
-    sFrqFqz = false;
-    $('#frq-alpha').attr('checked, false');
+function changeFrq() {
+    var lFrqAlpha = $('input[name="frq"]:checked').val() === "alpha";
+    if (sLastAlpha != lFrqAlpha) {
+	sLastAlpha = lFrqAlpha;
+	updateChartText();
+    }
 }
 
 function changeFrqRefLanguage() {
@@ -285,30 +296,7 @@ function changeFrqRefLanguage() {
 	lData.push(lItem.value);
     }
 
-    var lContent = {
-        chart: {
-            type: 'column'
-        },
-        title: {
-            text: 'fréquence: '
-        },
-        xAxis: {
-            categories: lKeys,
-            crosshair: true
-        },
-        tooltip: {
-            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                '<td style="padding:0"><b>{point.y:1f} %</b></td></tr>',
-            footerFormat: '</table>',
-            shared: true,
-            useHTML: true
-        },
-        series: [{
-            name: 'fréquence',
-            data: lData
-        }]
-    };
+    var lContent = generateChartsContent('Fréquence', lKeys, lData);
     $('#chart-ref').highcharts(lContent);
 }
 
@@ -320,12 +308,12 @@ $(function () {
 	clickApplyInput();
     });
 
-    $('#frq-alpha').click(function() {
-	clickFrqAlpha();
+    $('#frq-alpha').change(function() {
+	changeFrq();
     });
 
-    $('#frq-fqz').click(function() {
-	clickFrqFqz();
+    $('#frq-fqz').change(function() {
+	changeFrq();
     });
 
     $('#frq-ref-language').change(function() {
