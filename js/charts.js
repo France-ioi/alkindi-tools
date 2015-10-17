@@ -66,5 +66,4 @@ $(function () {
     };
 
     $('#chart-text').highcharts(content);
-    $('#chart-ref').highcharts(content);
 });

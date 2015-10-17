@@ -72,10 +72,10 @@
 	       <div>
 		 <form>
 		   <div class="display-order-item">
-		     <input type="radio" value="alpha" checked>alphabétique</input>
+		     <input id="frq-alpha" type="radio" value="alpha" checked>alphabétique</input>
 		   </div>
 		   <div class="display-order-item">
-		     <input type="radio" value="fqz">fréquence décroissante</input>
+		     <input id="frq-fqz" type="radio" value="fqz">fréquence décroissante</input>
 		   </div>
 		 </form>
 	       </div>
@@ -93,7 +93,10 @@
 	     <div class="chart-wrapper">
 	       <div id="chart-ref" class="chart-ref"></div>
 	     </div>
-
+	     <select id="frq-ref-language">
+	       <option value="fr">fr</option>
+	       <option value="en">en</option>
+	     </select>
 	   </div>
 	 </div>
 

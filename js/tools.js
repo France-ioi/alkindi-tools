@@ -1,3 +1,83 @@
+var sLimitRef = 20;
+var sMapLang = new Map();
+
+function initRefLang() {
+    // src https://fr.wikipedia.org/wiki/Fr%C3%A9quence_d%27apparition_des_lettres_en_fran%C3%A7ais
+    var lFr = new Map();
+    lFr.set('a', 7.637);
+    lFr.set('b', 0.901);
+    lFr.set('c', 3.260);
+    lFr.set('d', 3.669);
+    lFr.set('e', 14.715);
+    lFr.set('f', 1.066);
+    lFr.set('g', 0.866);
+    lFr.set('h', 0.737);
+    lFr.set('i', 7.529);
+    lFr.set('j', 0.545);
+    lFr.set('k', 0.049);
+    lFr.set('l', 5.456);
+    lFr.set('m', 2.968);
+    lFr.set('n', 7.095);
+    lFr.set('o', 5.378);
+    lFr.set('p', 3.021);
+    lFr.set('q', 1.362);
+    lFr.set('r', 6.553);
+    lFr.set('s', 7.948);
+    lFr.set('t', 7.244);
+    lFr.set('u', 6.311);
+    lFr.set('v', 1.628);
+    lFr.set('w', 0.114);
+    lFr.set('x', 0.387);
+    lFr.set('y', 0.308);
+    lFr.set('z', 0.136);
+    lFr.set('à', 0.486);
+    lFr.set('ç', 0.085);
+    lFr.set('è', 0.271);
+    lFr.set('é', 1.904);
+    lFr.set('ê', 0.225);
+    lFr.set('ë', 0.000);
+    lFr.set('î', 0.045);
+    lFr.set('ï', 0.006);
+    lFr.set('ù', 0.058);
+    lFr.set('œ', 0.018);
+
+    sMapLang.set("fr", lFr);
+
+    // src: https://en.wikipedia.org/wiki/Letter_frequency
+    var lEn = new Map();
+    lEn.set('a', 11.602);
+    lEn.set('b', 4.702);
+    lEn.set('c', 3.511);
+    lEn.set('d', 2.670);
+    lEn.set('e', 2.007);
+    lEn.set('f', 3.779);
+    lEn.set('g', 1.950);
+    lEn.set('h', 7.232);
+    lEn.set('i', 6.286);
+    lEn.set('j', 0.597);
+    lEn.set('k', 0.590);
+    lEn.set('l', 2.705);
+    lEn.set('m', 4.383);
+    lEn.set('n', 2.365);
+    lEn.set('o', 6.264);
+    lEn.set('p', 2.545);
+    lEn.set('q', 0.173);
+    lEn.set('r', 1.653);
+    lEn.set('s', 7.755);
+    lEn.set('t', 16.671);
+    lEn.set('u', 1.487);
+    lEn.set('v', 0.649);
+    lEn.set('w', 6.753);
+    lEn.set('x', 0.017);
+    lEn.set('y', 1.620);
+    lEn.set('z', 0.034);
+
+    sMapLang.set("en", lEn);
+
+}
+
+var sFrqAlpha = true;
+
 function displayText(iText) {
     console.log(iText);
 }
@@ -104,11 +184,11 @@ function computeContentChartFrq(iMapFrq) {
 
     var lObjects = new Array();
     iMapFrq.map.forEach(function (value, key) {
-	var lV = value / lSize;
-	lObjects.push({key: key, value: value});
+	var lV = value / lSize * 100;
+	lObjects.push({key: key, value: lV});
     });
 
-    sortFrq(lObjects, true);
+    sortFrq(lObjects, sFrqAlpha);
 
     for (var i = 0, len = lObjects.length; i < len; i++) {
 	var lItem = lObjects[i];
@@ -174,8 +254,82 @@ function clickApplyInput() {
     $('textarea#textarea-output').val(lTextOutput);
 }
 
+function clickFrqAlpha() {
+    sFrqFqz = true;
+    $('#frq-fqz').attr('checked, false');
+}
+
+function clickFrqFqz() {
+    sFrqFqz = false;
+    $('#frq-alpha').attr('checked, false');
+}
+
+function changeFrqRefLanguage() {
+    var lKeys = new Array();
+    var lData = new Array();
+    var lLang = $('#frq-ref-language').val();
+
+    var lObjects = new Array();
+    var lMap = sMapLang.get(lLang);
+    lMap.forEach(function (value, key) {
+	lObjects.push({key: key, value: value});
+    });
+
+    sortFrq(lObjects, false);
+
+
+    for (var i = 0, len = lObjects.length; i < sLimitRef; i++) {
+	var lItem = lObjects[i];
+
+	lKeys.push(lItem.key);
+	lData.push(lItem.value);
+    }
+
+    var lContent = {
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'fréquence: '
+        },
+        xAxis: {
+            categories: lKeys,
+            crosshair: true
+        },
+        tooltip: {
+            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                '<td style="padding:0"><b>{point.y:1f} %</b></td></tr>',
+            footerFormat: '</table>',
+            shared: true,
+            useHTML: true
+        },
+        series: [{
+            name: 'fréquence',
+            data: lData
+        }]
+    };
+    $('#chart-ref').highcharts(lContent);
+}
+
 $(function () {
+    initRefLang();
+    changeFrqRefLanguage();
+
     $('#apply-input').click(function() {
 	clickApplyInput();
     });
+
+    $('#frq-alpha').click(function() {
+	clickFrqAlpha();
+    });
+
+    $('#frq-fqz').click(function() {
+	clickFrqFqz();
+    });
+
+    $('#frq-ref-language').change(function() {
+	changeFrqRefLanguage();
+    });
+
 });
