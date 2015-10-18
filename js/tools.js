@@ -4,6 +4,7 @@ var sObjects = null;
 var sKeys = null;
 var sData = null;
 var sLastAlpha = true;
+var sSub = null;
 
 function generateChartsContent(iTitle, iKeys, iData) {
     var lContent = {
@@ -245,7 +246,7 @@ function clickApplyInput() {
     computeObjects(lMapFrq);
     sLastAlpha = $('input[name="frq"]:checked').val() === "alpha";
     updateChartText();
-
+    updateSub();
     var lTextOutput = tokensToText(lTokens);
     $('textarea#textarea-output').val(lTextOutput);
 }
@@ -298,6 +299,20 @@ function changeFrqRefLanguage() {
 
     var lContent = generateChartsContent('Fréquence', lKeys, lData);
     $('#chart-ref').highcharts(lContent);
+}
+
+function updateSub() {
+    if (sObjects !== undefined &&
+	sObjects != null) {
+
+	sSub = new Map();
+	for (var i = 0, len = sObjects.length; i < len; i++) {
+	    var lValue = sObjects[i].key;
+
+	    $('#sub').append('<div class="sub-item"><div class="sub-key">' + lValue + '</div><div class="sub-value">' + lValue + '</div></div>');
+	}
+
+    }
 }
 
 $(function () {

@@ -84,3 +84,36 @@
     display: block;
     position: relative;
 }
+
+.sub-wrapper {
+    display: block;
+    position: relative;
+    width: 100%;
+    padding: 20px;
+}
+
+.sub-item {
+    display: inline-block;
+    position: relative;
+    border: 1px solid black;
+    margin: 5px;
+    min-width: 50px;
+    text-align: center;
+}
+
+.sub-key {
+    display: block;
+    position: relative;
+    padding: 5px;
+    font-size: 30px;
+    border: 1px solid black;
+}
+
+.sub-value {
+    display: block;
+    position: relative;
+    padding: 5px;
+    font-size: 30px;
+    border: 1px solid black;
+    cursor: move;
+}
