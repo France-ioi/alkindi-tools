@@ -5,6 +5,9 @@ var sKeys = null;
 var sData = null;
 var sLastAlpha = true;
 var sSub = null;
+var sArrayAlpha = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+var sTokens = null;
+var dragAndDropContainer;
 
 function generateChartsContent(iTitle, iKeys, iData) {
     var lContent = {
@@ -136,11 +139,11 @@ function textToTokens(iText, iOptions) {
 	var lValue = lRef;
 	var lMute = false;
 
-	if (!lWithSpace && lRef == ' ') {
+	if (!lWithSpace && lRef.match('[ \t]')) {
 	    lMute = true;
 	}
 
-	if (!lWithPunctuation && lRef.match('[\u2000-\u206F\u2E00-\u2E7F\\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_`{|}~]')) {
+	if (!lWithPunctuation && lRef.match('[\u2000-\u206F\u2E00-\u2E7F\\\'!"#$%&()*+,\-.\/:;<=>?@_`{|}~^\\[\\]]')) {
 	    lMute = true;
 	}
 
@@ -156,7 +159,7 @@ function textToTokens(iText, iOptions) {
 	    lValue = lValue.toLowerCase();
 	}
 
-	lTokens.push({ref: lRef, value: lValue, mute: lMute});
+	lTokens.push({ref: lRef, value: lValue, mute: lMute, output: lValue});
     }
     return lTokens;
 }
@@ -166,7 +169,7 @@ function tokensToText(iTokens) {
     for (var i = 0, len = iTokens.length; i < len; i++) {
 	var lToken = iTokens[i];
 
-	var lValue = lToken.value;
+	var lValue = lToken.output;
 	if (!lToken.mute) {
 	    lStr += lValue;
 	}
@@ -240,14 +243,16 @@ function clickApplyInput() {
 	withUpperCase: lWithUpperCase
     };
 
-    var lTokens = textToTokens(lTextInput, lOptions);
-    var lMapFrq = computeMapFrq(lTokens);
+    $('#root').addClass('apply');
+
+    sTokens = textToTokens(lTextInput, lOptions);
+    var lMapFrq = computeMapFrq(sTokens);
 
     computeObjects(lMapFrq);
     sLastAlpha = $('input[name="frq"]:checked').val() === "alpha";
     updateChartText();
     updateSub();
-    var lTextOutput = tokensToText(lTokens);
+    var lTextOutput = tokensToText(sTokens);
     $('textarea#textarea-output').val(lTextOutput);
 }
 
@@ -302,22 +307,100 @@ function changeFrqRefLanguage() {
 }
 
 function updateSub() {
+
+    var lSubElement = document.getElementById('sub');
+    var paper = Raphael(lSubElement, 1350, 200);
+
+    var dragAndDrop = DragAndDropSystem({
+	paper : paper,
+	actionIfDropped : function(srcCont, srcPos, dstCont, dstPos, type)
+	{
+	    if(dstCont == null)
+		return false;
+	    return true;
+	},
+	drop: function(srcCont, srcPos, dstCont, dstPos, type) {
+	    generateNewSub(srcCont, srcPos, dstCont, dstPos, type);
+	}
+    });
+
+
+    var size = sArrayAlpha.length;
+    var w = 50, h = 50;
+    dragAndDropContainer = dragAndDrop.addContainer({
+	ident : 'seq',
+	cx : 650,
+	cy : 100,
+	widthPlace : 50,
+	heightPlace : 50,
+	nbPlaces : size,
+	dropMode : 'insertBefore'
+    });
+
     if (sObjects !== undefined &&
 	sObjects != null) {
 
-	sSub = new Map();
-	for (var i = 0, len = sObjects.length; i < len; i++) {
-	    var lValue = sObjects[i].key;
+	sSub = new Array();
+	for (var i = 0; i < size; i++) {
+	    var lValue = sArrayAlpha[i];
 
-	    $('#sub').append('<div class="sub-item"><div class="sub-key">' + lValue + '</div><div class="sub-value">' + lValue + '</div></div>');
+	    var u = paper.text(25 + i * 50, 40, lValue).attr({'font-size': 24, 'font-weight': 'bold'});
+
+	    var c = paper.rect(-w/2,-h/2,w,h).attr('fill', 'white');
+	    var t = paper.text(0,0, lValue).attr({'font-size': 24, 'font-weight': 'bold'});
+	    var draggable = dragAndDropContainer.createDraggable(i+1, i, [c,t]);
+	    sSub.push(lValue);
 	}
-
     }
+}
+
+function generateNewSub(srcCont, srcPos, dstCont, dstPos, type) {
+    var dra = dragAndDropContainer;
+
+    if (srcPos < dstPos) {
+	var l = sSub[srcPos];
+	for (var i = srcPos; i < dstPos; ++i) {
+	    sSub[i] = sSub[i + 1];
+	}
+	sSub[dstPos] = l;
+    } else if (srcPos > dstPos) {
+	var l = sSub[srcPos];
+	for (var i = srcPos; i > dstPos; --i) {
+	    sSub[i] = sSub[i - 1];
+	}
+	sSub[dstPos] = l;
+    }
+
+    var lSub = sSub;
+    var lMap = new Map();
+
+    for (var i = 0; i < sSub.length; ++i) {
+	var lKey = sArrayAlpha[i];
+	var lValue = sSub[i];
+	lMap.set(lKey, lValue);
+    }
+
+    if (sTokens != null) {
+	for (var i = 0, len = sTokens.length; i < len; i++) {
+	    var lToken = sTokens[i];
+
+	    var lValue = lToken.value;
+	    var lSub = lMap.get(lValue);
+	    if (lSub != null) {
+		lToken.output = lSub;
+	    }
+	}
+    }
+
+
+    var lTextOutput = tokensToText(sTokens);
+    $('textarea#textarea-output').val(lTextOutput);
 }
 
 $(function () {
     initRefLang();
     changeFrqRefLanguage();
+    $('textarea#textarea-input').val("IFMMP UXJUUFS !");
 
     $('#apply-input').click(function() {
 	clickApplyInput();

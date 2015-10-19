@@ -6,17 +6,23 @@
       <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
       <script type="text/javascript" src="bower_components/highcharts/highcharts.js"></script>
       <script type="text/javascript" src="bower_components/highcharts/modules/exporting.js"></script>
+      <script type="text/javascript" src="js/raphael.js"></script>
+      <script type="text/javascript" src="js/component.js"></script>
+      <script type="text/javascript" src="js/container.js"></script>
+      <script type="text/javascript" src="js/draggable_element.js"></script>
+      <script type="text/javascript" src="js/action.js"></script>
+      <script type="text/javascript" src="js/dragAndDropSystem.js"></script>
       <script type="text/javascript" src="js/tools.js"></script>
       <link type="text/css" rel="stylesheet" href="css/style.css">
    </head>
    <body>
-     <div class="container">
+     <div id="root" class="container">
        <div class="wrapper">
 	 <div>
 	   <span class="title">Analyse de fréquence</span>
 	 </div>
 
-	 <div class="section">
+	 <div class="section section-input">
 	   <div>
 	     <span class="section-title">Texte à analyser : </span>
 	   </div>
@@ -56,7 +62,7 @@
 	   </div>
 	 </div>
 
-	 <div class="section" style="display: none;">
+	 <div class="section section-frq">
 	   <div>
 	     <span class="section-title">Analyse de fréquence du texte : </span>
 	   </div>
@@ -84,7 +90,7 @@
 	   </div>
 	 </div>
 
-	 <div class="section" style="display: none;">
+	 <div class="section section-ref">
 	   <div>
 	     <span class="section-title">Fréquence de référence : </span>
 	   </div>
@@ -100,7 +106,7 @@
 	 </div>
 
 
-	 <div class="section">
+	 <div class="section section-sub">
 	   <div>
 	     <span class="section-title">Substitution générée : </span>
 	   </div>
@@ -111,7 +117,7 @@
 	 </div>
 
 
-	 <div class="section">
+	 <div class="section section-output">
 	   <div>
 	     <span class="section-title">Texte après substitution : </span>
 	   </div>
