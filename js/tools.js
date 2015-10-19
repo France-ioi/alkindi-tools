@@ -7,7 +7,6 @@ var sLastAlpha = true;
 var sSub = null;
 var sArrayAlpha = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
 var sTokens = null;
-var dragAndDropContainer;
 
 function generateChartsContent(iTitle, iKeys, iData) {
     var lContent = {
@@ -307,9 +306,9 @@ function changeFrqRefLanguage() {
 }
 
 function updateSub() {
-
+    $('#sub').empty();
     var lSubElement = document.getElementById('sub');
-    var paper = Raphael(lSubElement, 1350, 200);
+    var paper = Raphael(lSubElement, 680, 100);
 
     var dragAndDrop = DragAndDropSystem({
 	paper : paper,
@@ -326,13 +325,13 @@ function updateSub() {
 
 
     var size = sArrayAlpha.length;
-    var w = 50, h = 50;
+    var w = 25, h = 25;
     dragAndDropContainer = dragAndDrop.addContainer({
 	ident : 'seq',
-	cx : 650,
-	cy : 100,
-	widthPlace : 50,
-	heightPlace : 50,
+	cx : 330,
+	cy : 80,
+	widthPlace : 25,
+	heightPlace : 25,
 	nbPlaces : size,
 	dropMode : 'insertBefore'
     });
@@ -344,10 +343,10 @@ function updateSub() {
 	for (var i = 0; i < size; i++) {
 	    var lValue = sArrayAlpha[i];
 
-	    var u = paper.text(25 + i * 50, 40, lValue).attr({'font-size': 24, 'font-weight': 'bold'});
+	    var u = paper.text(17 + i * 25, 40, lValue).attr({'font-size': 14, 'font-weight': 'bold'});
 
 	    var c = paper.rect(-w/2,-h/2,w,h).attr('fill', 'white');
-	    var t = paper.text(0,0, lValue).attr({'font-size': 24, 'font-weight': 'bold'});
+	    var t = paper.text(0,0, lValue).attr({'font-size': 14, 'font-weight': 'bold'});
 	    var draggable = dragAndDropContainer.createDraggable(i+1, i, [c,t]);
 	    sSub.push(lValue);
 	}
@@ -355,8 +354,6 @@ function updateSub() {
 }
 
 function generateNewSub(srcCont, srcPos, dstCont, dstPos, type) {
-    var dra = dragAndDropContainer;
-
     if (srcPos < dstPos) {
 	var l = sSub[srcPos];
 	for (var i = srcPos; i < dstPos; ++i) {
