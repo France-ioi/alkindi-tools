@@ -7,6 +7,7 @@ var sLastAlpha = true;
 var sSub = null;
 var sArrayAlpha = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
 var sTokens = null;
+var sFrqAlpha = true;
 
 function generateChartsContent(iTitle, iKeys, iData) {
     var lContent = {
@@ -108,13 +109,28 @@ function initRefLang() {
     lEn.set('z', 0.034);
 
     sMapLang.set("en", lEn);
-
 }
 
-var sFrqAlpha = true;
 
-function displayText(iText) {
-    console.log(iText);
+function accentReplace(str) {
+    str = str.replace(/[ÂÃÄÀÁÅ]/gi, "A");
+    str = str.replace(/[Ç]/gi,      "C");
+    str = str.replace(/[ÈÉÊË]/gi,   "E");
+    str = str.replace(/[ÌÍÎÏ]/gi,   "I");
+    str = str.replace(/[Ð]/gi,      "D");
+    str = str.replace(/[Ñ]/gi,      "N");
+    str = str.replace(/[ÒÓÔÕÖØ]/gi, "O");
+    str = str.replace(/[ÙÚÛÜ]/gi,   "U");
+    str = str.replace(/[Ý]/gi,      "Y");
+    str = str.replace(/[àáâãäå]/gi, "a");
+    str = str.replace(/[ç]/gi,      "c");
+    str = str.replace(/[èéêë]/gi,   "e");
+    str = str.replace(/[ìíîï]/gi,   "i");
+    str = str.replace(/[ñ]/gi,      "n");
+    str = str.replace(/[òóôõöø]/gi, "o");
+    str = str.replace(/[ùúûü]/gi,   "u");
+    str = str.replace(/[ýÿ]/gi,     "y");
+    return str;
 }
 
 function textToTokens(iText, iOptions) {
@@ -137,6 +153,8 @@ function textToTokens(iText, iOptions) {
 	var lRef = iText[i];
 	var lValue = lRef;
 	var lMute = false;
+	var lWithAccent = false;
+	var lFromUpperCase = false;
 
 	if (!lWithSpace && lRef.match('[ \t]')) {
 	    lMute = true;
@@ -147,7 +165,10 @@ function textToTokens(iText, iOptions) {
 	}
 
 	if (!lWithAccent) {
-
+	    lValue = accentReplace(lValue);
+	    if (lValue !== lRef) {
+		lWithAccent = true;
+	    }
 	}
 
 	if (!lWithDigit && lRef.match('[0-9]')) {
@@ -156,9 +177,12 @@ function textToTokens(iText, iOptions) {
 
 	if (!lWithUpperCase) {
 	    lValue = lValue.toLowerCase();
+	    if (lValue !== lRef) {
+		lFromUpperCase = true;
+	    }
 	}
 
-	lTokens.push({ref: lRef, value: lValue, mute: lMute, output: lValue});
+	lTokens.push({ref: lRef, value: lValue, output: lValue, mute: lMute, withAccent: lWithAccent, fromUpperCase: lFromUpperCase});
     }
     return lTokens;
 }
@@ -169,9 +193,11 @@ function tokensToText(iTokens) {
 	var lToken = iTokens[i];
 
 	var lValue = lToken.output;
-	if (!lToken.mute) {
-	    lStr += lValue;
+	if (lToken.fromUpperCase) {
+	    lValue = lValue.toUpperCase();
 	}
+	lStr += lValue;
+
     }
     return lStr;
 }
@@ -251,8 +277,7 @@ function clickApplyInput() {
     sLastAlpha = $('input[name="frq"]:checked').val() === "alpha";
     updateChartText();
     updateSub();
-    var lTextOutput = tokensToText(sTokens);
-    $('textarea#textarea-output').val(lTextOutput);
+    displayOutput(sTokens);
 }
 
 function updateChartText() {
@@ -389,8 +414,11 @@ function generateNewSub(srcCont, srcPos, dstCont, dstPos, type) {
 	}
     }
 
+    displayOutput(sTokens);
+}
 
-    var lTextOutput = tokensToText(sTokens);
+function displayOutput(iTokens) {
+    var lTextOutput = tokensToText(iTokens);
     $('textarea#textarea-output').val(lTextOutput);
 }
 
