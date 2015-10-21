@@ -8,6 +8,8 @@ var sSub = null;
 var sArrayAlpha = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
 var sTokens = null;
 var sFrqAlpha = true;
+var sSubInput = true;
+var sTextInput = "Hk dwhrsd oktrhdtqr ezlhkkdr c’zsszptdr bqxoszmzkxshptdr, kdr oktr bnmmtdr dszms k’zmzkxrd eqdptdmshdkkd, kz bqxoszmzkxrd cheedqdmshdkkd ds kz bqxoszmzkxrd khmdzhqd. K’zmzkxrd eqdptdmshdkkd, cdbntudqs zt hwd rhèbkd ozq Zk-Jhmch, dwzlhmd kdr qdodshshnmr cdr kdssqdr ct ldrrzfd bgheeqd zehm cd sqntudq kz bkd. Dkkd drs hmdeehbzbd bnmsqd kdr bgheeqdldmsr lncdqmdr sdkr ptd CDR, QRZ. Dkkd drs oqhmbhozkdldms tshkhrdd bnmsqd kdr bgheeqdldmsr lnmn-zkogzadshptdr pth rtarshstdms bgzptd kdssqd ozq tmd ztsqd ds pth oqdrdmsdms tm ahzhr rszshrshptd. K’hmchbd cd bnhmbhcdmbd, hmudmsd dm 1920 ozq Vhkkhzl E. Eqhdclzm, odqlds cd bzkbtkdq kz oqnazahkhsd cd qdodshshnmr cdr kdssqdr ct ldrrzfd bgheeqd. Hk drs rntudms bntokd zudb k’zmzkxrd eqdptdmshdkkd. Bdkz odqlds cd rzunhq kd sxod cd bgheeqdldms c’tm ldrrzfd (bgheeqdldms lnmn-zkogzadshptd nt onkx-zkogzadshptd) zhmrh ptd kz knmftdtq oqnazakd cd kz bkd. K’zsszptd ozq lns oqnazakd bnmrhrsd à rtoonrdq k’dwhrsdmbd c’tm lns oqnazakd czmr kd ldrrzfd bgheeqd. Hk drs cnmb onrrhakd c’dm cdcthqd kz bkd ct ldrrzfd rh kd lns bgnhrh drs bnqqdbs. Bd sxod c’zsszptd z dsd ldmd bnmsqd kz lzbghmd Dmhflz ctqzms kz Rdbnmcd Ftdqqd lnmchzkd.";
 
 function generateChartsContent(iFont, iKeys, iData) {
     var lContent = {
@@ -20,8 +22,10 @@ function generateChartsContent(iFont, iKeys, iData) {
         xAxis: {
             categories: iKeys,
             crosshair: true,
-	    style: {
-		fontFamily: iFont
+	    labels: {
+		style: {
+		    fontFamily: iFont
+		}
 	    }
         },
         tooltip: {
@@ -75,16 +79,6 @@ function initRefLang() {
     lFr.set('x', 0.387);
     lFr.set('y', 0.308);
     lFr.set('z', 0.136);
-    lFr.set('à', 0.486);
-    lFr.set('ç', 0.085);
-    lFr.set('è', 0.271);
-    lFr.set('é', 1.904);
-    lFr.set('ê', 0.225);
-    lFr.set('ë', 0.000);
-    lFr.set('î', 0.045);
-    lFr.set('ï', 0.006);
-    lFr.set('ù', 0.058);
-    lFr.set('œ', 0.018);
 
     sMapLang.set("fr", lFr);
 
@@ -120,6 +114,14 @@ function initRefLang() {
     sMapLang.set("en", lEn);
 }
 
+function getMapId() {
+    var lRes = new Array();
+    for (var i = 0; i < sArrayAlpha.length; ++i) {
+	var lValue = sArrayAlpha[i];
+	lRes.push({key: lValue, value : lValue});
+    }
+    return lRes;
+}
 
 function accentReplace(str) {
     str = str.replace(/[ÂÃÄÀÁÅ]/gi, "A");
@@ -193,13 +195,16 @@ function textToTokens(iText, iOptions) {
 
 	lTokens.push({ref: lRef, value: lValue, output: lValue, mute: lMute, withAccent: lWithAccent, fromUpperCase: lFromUpperCase});
     }
-    return lTokens;
+    var lFont = getAlphaFont();
+    return {font: lFont, tokens: lTokens};
 }
 
 function tokensToText(iTokens) {
     var lStr = "";
-    for (var i = 0, len = iTokens.length; i < len; i++) {
-	var lToken = iTokens[i];
+    var lTokens = iTokens.tokens;
+
+    for (var i = 0, len = lTokens.length; i < len; i++) {
+	var lToken = lTokens[i];
 
 	var lValue = lToken.output;
 	if (lToken.fromUpperCase) {
@@ -214,9 +219,10 @@ function tokensToText(iTokens) {
 function computeMapFrq(iTokens) {
     var lMap = new Map();
     var lSize = 0;
+    var lTokens = iTokens.tokens;
 
-    for (var i = 0, len = iTokens.length; i < len; i++) {
-	var lToken = iTokens[i];
+    for (var i = 0, len = lTokens.length; i < len; i++) {
+	var lToken = lTokens[i];
 
 	var lValue = lToken.value;
 	var lMute = lToken.mute;
@@ -281,15 +287,16 @@ function clickApplyInput() {
 
     sTokens = textToTokens(lTextInput, lOptions);
     var lMapFrq = computeMapFrq(sTokens);
-
+    var lFont = sTokens.font;
     computeObjects(lMapFrq);
     sLastAlpha = $('input[name="frq"]:checked').val() === "alpha";
-    updateChartText();
-    updateSub();
+    updateChartText(lFont);
+    var lMapId = getMapId();
+    updateSub(lMapId, lFont);
     displayOutput(sTokens);
 }
 
-function updateChartText() {
+function updateChartText(iFont) {
     if (sObjects !== undefined &&
 	sObjects != null) {
 	sortFrq(sObjects, sLastAlpha);
@@ -306,7 +313,7 @@ function updateChartText() {
 	    sData.push(0);
 	}
     }
-    var lContent = generateChartsContent('Analyse de fréquence du texte', sKeys, sData);
+    var lContent = generateChartsContent(iFont, sKeys, sData);
     $('#chart-text').highcharts(lContent);
 }
 
@@ -314,7 +321,7 @@ function changeFrq() {
     var lFrqAlpha = $('input[name="frq"]:checked').val() === "alpha";
     if (sLastAlpha != lFrqAlpha) {
 	sLastAlpha = lFrqAlpha;
-	updateChartText();
+	updateChartText(sTokens.font);
     }
 }
 
@@ -343,7 +350,7 @@ function changeFrqRefLanguage() {
     $('#chart-ref').highcharts(lContent);
 }
 
-function updateSub() {
+function updateSub(iMap, iFontKey) {
     $('#sub').empty();
     var lSubElement = document.getElementById('sub');
     var paper = Raphael(lSubElement, 680, 100);
@@ -362,7 +369,7 @@ function updateSub() {
     });
 
 
-    var size = sArrayAlpha.length;
+    var size = iMap.length;
     var w = 25, h = 25;
     dragAndDropContainer = dragAndDrop.addContainer({
 	ident : 'seq',
@@ -379,9 +386,11 @@ function updateSub() {
 
 	sSub = new Array();
 	for (var i = 0; i < size; i++) {
-	    var lValue = sArrayAlpha[i];
+	    var lItem = iMap[i];
+	    var lKey = lItem.key;
+	    var lValue = lItem.value;
 
-	    var u = paper.text(17 + i * 25, 40, lValue).attr({'font-family' : "alien", 'font-size': 14, 'font-weight': 'bold'});
+	    var u = paper.text(17 + i * 25, 40, lValue).attr({'font-family' : iFontKey, 'font-size': 14, 'font-weight': 'bold'});
 
 	    var c = paper.rect(-w/2,-h/2,w,h).attr('fill', 'white');
 	    var t = paper.text(0,0, lValue).attr({'font-size': 14, 'font-weight': 'bold'});
@@ -415,19 +424,23 @@ function generateNewSub(srcCont, srcPos, dstCont, dstPos, type) {
 	lMap.set(lKey, lValue);
     }
 
-    if (sTokens != null) {
-	for (var i = 0, len = sTokens.length; i < len; i++) {
-	    var lToken = sTokens[i];
+    updateTokensSub(sTokens, lMap);
+    displayOutput(sTokens);
+}
+
+function updateTokensSub(iTokens, iMap) {
+    if (iTokens != null) {
+	var lTokens = iTokens.tokens;
+	for (var i = 0, len = lTokens.length; i < len; i++) {
+	    var lToken = lTokens[i];
 
 	    var lValue = lToken.value;
-	    var lSub = lMap.get(lValue);
+	    var lSub = iMap.get(lValue);
 	    if (lSub != null) {
 		lToken.output = lSub;
 	    }
 	}
     }
-
-    displayOutput(sTokens);
 }
 
 function displayOutput(iTokens) {
@@ -435,22 +448,75 @@ function displayOutput(iTokens) {
     $('textarea#textarea-output').val(lTextOutput);
 }
 
-function changeAlphaFont() {
+function getAlphaFont() {
     var lFont = $('#alpha-font option:selected').val();
+    return lFont;
+}
+
+function changeAlphaFont() {
+    var lFont = getAlphaFont();
 
     if (lFont === 'alien') {
 	$('textarea#textarea-input').css('font-family', "alien");
     } else {
 	$('textarea#textarea-input').css('font-family', "inherit");
     }
-
 }
+
+function changeSubRadio() {
+    var lVersion = $('input[name="sub-radio"]:checked').val();
+    if (sSubInput && lVersion === 'generate') {
+	sSubInput = false;
+	updateSubFromRef();
+    } else if (sSubInput && lVersion === 'input') {
+	sSubInput = true;
+
+    }
+}
+
+function updateSubFromRef() {
+    var lFont = sTokens.font;
+
+    var lLang = $('#frq-ref-language').val();
+
+    var lMapRef = sMapLang.get(lLang);
+    var lRef = new Array();
+    lMapRef.forEach(function (value, key) {
+	lRef.push({key: key, value: value});
+    });
+    sortFrq(lRef, false);
+
+    var lMapFrq = computeMapFrq(sTokens);
+    var lFrq = new Array();
+    lMapFrq.map.forEach(function (value, key) {
+	lFrq.push({key: key, value: value});
+    });
+    sortFrq(lFrq, false);
+
+    var lMapA = new Array();
+    var lMap = new Map();
+    sSub = new Array();
+    for (var i = 0; i < lRef.length; ++i) {
+	var lKey = lRef[i].key;
+	var lValue = lKey;
+	if (i < lFrq.length) {
+	    lValue = lFrq[i].key;
+	}
+	lMapA.push({key: lKey, value: lValue});
+	lMap.set(lKey, lValue);
+	sSub[i] = lValue;
+    }
+    updateSub(lMapA, lFont);
+    updateTokensSub(sTokens, lMap);
+    displayOutput(sTokens);
+}
+
 
 $(function () {
     initRefLang();
     changeFrqRefLanguage();
     changeAlphaFont();
-    $('textarea#textarea-input').val("IFMMP UXJUUFS !");
+    $('textarea#textarea-input').val(sTextInput);
 
     $('#apply-input').click(function() {
 	clickApplyInput();
@@ -462,6 +528,14 @@ $(function () {
 
     $('#frq-fqz').change(function() {
 	changeFrq();
+    });
+
+    $('#sub-input').change(function() {
+	changeSubRadio();
+    });
+
+    $('#sub-generate').change(function() {
+	changeSubRadio();
     });
 
     $('#frq-ref-language').change(function() {
