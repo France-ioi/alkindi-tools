@@ -32,7 +32,13 @@ function generateChartsContent(iTitle, iKeys, iData) {
         series: [{
             name: 'fréquence',
             data: iData
-        }]
+        }],
+	exporting: {
+            enabled: false
+	},
+	credits: {
+	    enabled: false
+	}
     };
     return lContent;
 }
