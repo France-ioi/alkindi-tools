@@ -293,10 +293,14 @@ function updateChartText() {
 
 	sKeys = [];
 	sData = [];
-	for (var i = 0, len = sObjects.length; i < len; i++) {
+	for (var i = 0, len = sObjects.length; i < len && i < sLimitRef; i++) {
 	    var lItem = sObjects[i];
 	    sKeys.push(lItem.key);
 	    sData.push(lItem.value);
+	}
+	for (var i = sObjects.length; i < sLimitRef; ++i) {
+	    sKeys.push("");
+	    sData.push(0);
 	}
     }
     var lContent = generateChartsContent('Analyse de fréquence du texte', sKeys, sData);
