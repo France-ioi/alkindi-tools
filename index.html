@@ -2,6 +2,8 @@
    <head>
       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
       <title>Alkindi Tools</title>
+      <link type="text/css" rel="stylesheet" href="css/fonts.css"/>
+      <link type="text/css" rel="stylesheet" href="css/style.css"/>
       <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
       <script type="text/javascript" src="bower_components/highcharts/highcharts.js"></script>
       <script type="text/javascript" src="bower_components/highcharts/modules/exporting.js"></script>
@@ -12,7 +14,6 @@
       <script type="text/javascript" src="js/action.js"></script>
       <script type="text/javascript" src="js/dragAndDropSystem.js"></script>
       <script type="text/javascript" src="js/tools.js"></script>
-      <link type="text/css" rel="stylesheet" href="css/style.css"/>
    </head>
    <body>
      <div id="root" class="container">
@@ -24,6 +25,13 @@
 	 <div id="section-input" class="section section-input">
 	   <div>
 	     <span class="section-title">Texte à analyser : </span>
+	     <div>
+	       <span>police: </span>
+	       <select id="alpha-font" name="alpha-font">
+		 <option value="latin">latin</option>
+		 <option value="alien" selected>alien</option>
+	       </select>
+	     </div>
 	   </div>
 	   <div>
 	     <span class="textarea-wrapper">

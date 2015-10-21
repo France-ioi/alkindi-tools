@@ -45,7 +45,13 @@
 
 }
 
-.textarea-input,
+.textarea-input {
+    margin-top: 10px;
+    width: 600px;
+    height: 100px;
+    resize: none;
+}
+
 .textarea-output {
     margin-top: 10px;
     width: 600px;

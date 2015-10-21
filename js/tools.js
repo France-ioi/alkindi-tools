@@ -9,20 +9,23 @@ var sArrayAlpha = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', '
 var sTokens = null;
 var sFrqAlpha = true;
 
-function generateChartsContent(iTitle, iKeys, iData) {
+function generateChartsContent(iFont, iKeys, iData) {
     var lContent = {
         chart: {
             type: 'column'
         },
         title: {
-            text: iTitle
+            text: ''
         },
         xAxis: {
             categories: iKeys,
-            crosshair: true
+            crosshair: true,
+	    style: {
+		fontFamily: iFont
+	    }
         },
         tooltip: {
-            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+            headerFormat: '<span style="font-size:10px;">{point.key}</span><table>',
             pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
                 '<td style="padding:0"><b>{point.y:1f} %</b></td></tr>',
             footerFormat: '</table>',
@@ -378,7 +381,7 @@ function updateSub() {
 	for (var i = 0; i < size; i++) {
 	    var lValue = sArrayAlpha[i];
 
-	    var u = paper.text(17 + i * 25, 40, lValue).attr({'font-size': 14, 'font-weight': 'bold'});
+	    var u = paper.text(17 + i * 25, 40, lValue).attr({'font-family' : "alien", 'font-size': 14, 'font-weight': 'bold'});
 
 	    var c = paper.rect(-w/2,-h/2,w,h).attr('fill', 'white');
 	    var t = paper.text(0,0, lValue).attr({'font-size': 14, 'font-weight': 'bold'});
@@ -432,9 +435,21 @@ function displayOutput(iTokens) {
     $('textarea#textarea-output').val(lTextOutput);
 }
 
+function changeAlphaFont() {
+    var lFont = $('#alpha-font option:selected').val();
+
+    if (lFont === 'alien') {
+	$('textarea#textarea-input').css('font-family', "alien");
+    } else {
+	$('textarea#textarea-input').css('font-family', "inherit");
+    }
+
+}
+
 $(function () {
     initRefLang();
     changeFrqRefLanguage();
+    changeAlphaFont();
     $('textarea#textarea-input').val("IFMMP UXJUUFS !");
 
     $('#apply-input').click(function() {
@@ -453,4 +468,7 @@ $(function () {
 	changeFrqRefLanguage();
     });
 
+    $('#alpha-font').change(function() {
+	changeAlphaFont();
+    });
 });
