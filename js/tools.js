@@ -13,6 +13,9 @@ var sTextInput = "Hk dwhrsd oktrhdtqr ezlhkkdr c’zsszptdr bqxoszmzkxshptdr, kd
 
 function generateChartsContent(iFont, iKeys, iData) {
     var lContent = {
+	legend: {
+	    enabled: false
+	},
         chart: {
             type: 'column'
         },
@@ -24,14 +27,19 @@ function generateChartsContent(iFont, iKeys, iData) {
             crosshair: true,
 	    labels: {
 		style: {
-		    fontFamily: iFont
+		    fontFamily: iFont,
+		    fontSize: '16px'
 		}
 	    }
         },
+	yAxis: {
+	    title: {
+		text: ''
+	    }
+	},
         tooltip: {
-            headerFormat: '<span style="font-size:10px;">{point.key}</span><table>',
-            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                '<td style="padding:0"><b>{point.y:1f} %</b></td></tr>',
+            headerFormat: '<span><span style="font-weight: bold; font-family: ' + iFont+ '; font-size:16px;">{point.key}</span>:&nbsp;{point.y:1f}&nbsp;%</span><table>',
+            pointFormat: '',
             footerFormat: '</table>',
             shared: true,
             useHTML: true
@@ -261,8 +269,9 @@ function computeObjects(iMapFrq) {
 
     sObjects = [];
     iMapFrq.map.forEach(function (value, key) {
-	var lV = value / lSize * 100 ;
-	sObjects.push({key: key, value: lV});
+	var lV = (value / lSize * 100);
+	var lVal = lV.toFixed(2) / 1;
+	sObjects.push({key: key, value: lVal});
     });
 }
 
@@ -390,7 +399,7 @@ function updateSub(iMap, iFontKey) {
 	    var lKey = lItem.key;
 	    var lValue = lItem.value;
 
-	    var u = paper.text(17 + i * 25, 40, lValue).attr({'font-family' : iFontKey, 'font-size': 14, 'font-weight': 'bold'});
+	    var u = paper.text(17 + i * 25, 40, lValue).attr({'font-family' : iFontKey, 'font-size': 18, 'font-weight': 'bold'});
 
 	    var c = paper.rect(-w/2,-h/2,w,h).attr('fill', 'white');
 	    var t = paper.text(0,0, lValue).attr({'font-size': 14, 'font-weight': 'bold'});

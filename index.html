@@ -2,6 +2,7 @@
    <head>
       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
       <title>Alkindi Tools</title>
+      <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
       <link type="text/css" rel="stylesheet" href="css/fonts.css"/>
       <link type="text/css" rel="stylesheet" href="css/style.css"/>
       <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
@@ -25,7 +26,7 @@
 	 <div id="section-input" class="section section-input">
 	   <div>
 	     <span class="section-title">Texte à analyser : </span>
-	     <div>
+	     <div style="display:none;">
 	       <span>police: </span>
 	       <select id="alpha-font" name="alpha-font">
 		 <option value="latin">latin</option>
@@ -36,8 +37,8 @@
 	   <div>
 	     <span class="textarea-wrapper">
 	       <textarea id="textarea-input" class="textarea-input"></textarea>
-	       <div>
-		 <button id="apply-input">Appliquer</button>
+	       <div class="apply-wrapper-input">
+		 <button class="apply-button" id="apply-input">Analyser</button>
 	       </div>
 	     </span>
 	     <span>

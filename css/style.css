@@ -1,3 +1,6 @@
+body {
+    font-family: 'Roboto', sans-serif;
+}
 .container {
     display: block;
     position: relative;
@@ -49,7 +52,8 @@
     margin-top: 10px;
     width: 600px;
     height: 100px;
-    resize: none;
+    font-size: 16px;
+/*    resize: none;*/
 }
 
 .textarea-output {
@@ -67,6 +71,7 @@
     display: inline-block;
     position: relative;
     vertical-align: top;
+    margin-top: 8px;
 }
 
 .chart-text,
@@ -163,4 +168,12 @@
 .apply .section-ref,
 .apply .section-sub {
     display: block;
+}
+
+.apply-wrapper-input {
+    text-align: center;
+}
+
+.apply-button {
+    margin-top: 10px;
 }
