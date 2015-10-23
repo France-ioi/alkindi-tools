@@ -428,12 +428,12 @@ function generateNewSub(srcCont, srcPos, dstCont, dstPos, type) {
     }
 
     var lSub = sSub;
-    var lMap = new Map();
+    var lMap = new Array();
 
     for (var i = 0; i < sSub.length; ++i) {
 	var lKey = sArrayRef[i];
 	var lValue = sSub[i];
-	lMap.set(lKey, lValue);
+	lMap.push({key: lKey, value: lValue});
     }
 
     updateTokensSub(sTokens, lMap);
@@ -443,12 +443,16 @@ function generateNewSub(srcCont, srcPos, dstCont, dstPos, type) {
 function updateTokensSub(iTokens, iMap) {
     if (iTokens != null) {
 	var lTokens = iTokens.tokens;
+	var lMap = new Map();
+	for (var i = 0; i < iMap.length; ++i) {
+	    lMap.set(iMap[i].key, iMap[i].value);
+	}
 	for (var i = 0, len = lTokens.length; i < len; i++) {
 	    var lToken = lTokens[i];
 
 	    var lValue = lToken.value;
-	    var lSub = iMap.get(lValue);
-	    if (lSub != null) {
+	    var lSub = lMap.get(lValue);
+	    if (lSub !== undefined) {
 		lToken.output = lSub;
 	    }
 	}
@@ -505,25 +509,42 @@ function updateSubFromRef() {
     });
     sortFrq(lFrq, false);
 
-    var lMapA = new Array();
-    var lMap = new Map();
+    var lMap = new Array();
     sSub = new Array();
     var lMarked = new Array();
     sArrayRef = new Array();
     for (var i = 0; i < lRef.length; ++i) {
-	var lKey = lRef[i].key;
-	var lValue = lKey;
+	var lKey = getNextAlphaFrom(sArrayRef);
+	var lValue = lRef[i].key;
 	if (i < lFrq.length) {
-	    lValue = lFrq[i].key;
+	    lKey = lFrq[i].key;
 	}
-	lMapA.push({key: lValue, value: lKey});
-	lMap.set(lValue, lKey);
-	sArrayRef.push(lValue);
+	lMap.push({key: lKey, value: lValue});
+	sArrayRef.push(lKey);
 	sSub[i] = lValue;
     }
-    updateSub(lMapA, lFont);
+    updateSub(lMap, lFont);
     updateTokensSub(sTokens, lMap);
     displayOutput(sTokens);
+}
+
+function getNextAlphaFrom(array) {
+    for (var i = 0; i < sArrayAlpha.length; ++i) {
+	var lCharacter = sArrayAlpha[i];
+	var lFound = false;
+
+	for (var j = 0; j < sArrayRef.length; ++j) {
+	    var lAlpha = sArrayRef[j];
+	    if (lCharacter === lAlpha) {
+		lFound = true;
+		break;
+	    }
+	}
+	if (!lFound) {
+	    return lCharacter;
+	}
+    }
+    return '_';
 }
 
 
