@@ -25,6 +25,21 @@ body {
     margin-top: 20px;
 }
 
+.section-button {
+    display: inline-block;
+    border: 1px solid black;
+    font-size: 16px;
+    padding: 0px;
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    vertical-align: initial;
+    text-align: center;
+}
+
+.minify .section-button {
+}
+
 .section-title {
     display: inline-block;
     position: relative;
@@ -44,6 +59,10 @@ body {
     margin-left: 30px;
 }
 
+.minify .options-wrapper {
+    display: none;
+}
+
 .options-title {
 
 }
@@ -54,6 +73,12 @@ body {
     height: 100px;
     font-size: 16px;
 /*    resize: none;*/
+}
+
+.minify .textarea-input,
+.minify .textarea-output {
+    border: 0 solid transparent;
+    height: 60px;
 }
 
 .textarea-output {
@@ -80,12 +105,21 @@ body {
     height: 300px;
 }
 
+.minify .chart-text,
+.minify .chart-ref {
+    height: 100px;
+}
+
 .display-order-wrapper {
     display: inline-block;
     position: relative;
     vertical-align: top;
     margin-left: 30px;
     margin-top: 20px;
+}
+
+.minify .display-order-wrapper {
+    display: none;
 }
 
 .display-order-title {
@@ -157,7 +191,15 @@ body {
     display: none;
 }
 
+.minify .frq-ref-language {
+    display: none;
+}
+
 .section-sub {
+    display: none;
+}
+
+.minify .sub-input {
     display: none;
 }
 
@@ -176,4 +218,8 @@ body {
 
 .apply-button {
     margin-top: 10px;
+}
+
+.minify .apply-button {
+    display: none;
 }
