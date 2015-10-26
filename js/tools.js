@@ -395,7 +395,7 @@ function updateSub(iMap, iFontKey) {
 	widthPlace : 25,
 	heightPlace : 25,
 	nbPlaces : size,
-	dropMode : 'insertBefore'
+	dropMode : 'swap'
     });
 
     if (sObjects !== undefined &&
@@ -418,7 +418,7 @@ function updateSub(iMap, iFontKey) {
 }
 
 function generateNewSub(srcCont, srcPos, dstCont, dstPos, type) {
-    if (srcPos < dstPos) {
+/*    if (srcPos < dstPos) {
 	var l = sSub[srcPos];
 	for (var i = srcPos; i < dstPos; ++i) {
 	    sSub[i] = sSub[i + 1];
@@ -430,7 +430,10 @@ function generateNewSub(srcCont, srcPos, dstCont, dstPos, type) {
 	    sSub[i] = sSub[i - 1];
 	}
 	sSub[dstPos] = l;
-    }
+    }*/
+    var l = sSub[srcPos];
+    sSub[srcPos] = sSub[dstPos];
+    sSub[dstPos] = l;
 
     var lSub = sSub;
     var lMap = new Array();

@@ -16,6 +16,7 @@
                           sinon un comportement replace.
      - "insertBefore" : comme insert, mais la zone de drop est plus du coté du début de la case, donc ca marche mieux
                         avec dragDisplayMode="marker".
+     - "swap"    : lorsqu'un objet est laché sur la case, l'objet actuel de la case est mis a la place de l'objet source.
   dragDisplayMode : peut valoir "preview" (pour voir le placeholder avec des tirés jaune)
                     ou "marker" (pour voir le trait rouge).
   placeBackgroundArray : définit le background que l'on met à chaque case (juste pour faire joli).
@@ -43,7 +44,7 @@ function _container(dragAndDropSystem,ident,cx, cy, nbPlaces, widthPlace, height
       [dragAndDropSystem.paper.rect(-widthPlace/2,-heightPlace/2,widthPlace,heightPlace)
          .attr({'stroke' : 'yellow', 'stroke-width' : '2', 'stroke-dasharray': '-'})], this.dragAndDropSystem.paper);
    this.placeHolder.hide();
-   
+
    this.sourceElemArray = sourceElemArray;
 
 //sanityCheck
@@ -59,8 +60,8 @@ function _container(dragAndDropSystem,ident,cx, cy, nbPlaces, widthPlace, height
          if (align != 'left' && align != 'right')
             alert('Since direction is horizontal, align should be \'left\' or \'right\'');
 
-      if (dropMode != 'replace' && dropMode != 'insert-replace' && dropMode != 'insert' && dropMode != 'insertBefore')
-         alert('dropMode should be \'replace\' or \'insert\' or \'insert-replace\' or \'insertBefore\'');
+      if (dropMode != 'replace' && dropMode != 'insert-replace' && dropMode != 'insert' && dropMode != 'insertBefore' && dropMode != 'swap')
+         alert('dropMode should be \'replace\' or \'insert\' or \'insert-replace\' or \'insertBefore\' or \'swap\'');
 
       if (dragDisplayMode != 'preview' && dragDisplayMode != 'marker')
          alert('dragDisplayMode should be \'preview\' or \'marker\' ');
@@ -88,7 +89,7 @@ function _container(dragAndDropSystem,ident,cx, cy, nbPlaces, widthPlace, height
          if (align == 'top')
             return [this.cx, this.cy + ((2*iPlace + 1 - this.nbPlaces)*h)/2];
          else
-            return [this.cx, this.cy + ((this.nbPlaces - 2*iPlace - 1)*h)/2]; 
+            return [this.cx, this.cy + ((this.nbPlaces - 2*iPlace - 1)*h)/2];
    };
 
    /*
@@ -100,7 +101,7 @@ function _container(dragAndDropSystem,ident,cx, cy, nbPlaces, widthPlace, height
       {
          var c = this.placeCenter(iPlace);
          var w = this.widthPlace, h = this.heightPlace;
-         if (x>=c[0]-w/2 && x<=c[0]+w/2 && y>=c[1]-h/2 && y<=c[1]+h/2) 
+         if (x>=c[0]-w/2 && x<=c[0]+w/2 && y>=c[1]-h/2 && y<=c[1]+h/2)
             return iPlace;
       }
       return -1;
@@ -109,17 +110,17 @@ function _container(dragAndDropSystem,ident,cx, cy, nbPlaces, widthPlace, height
    this.isInContainer = function(x,y){return this.placeId(x,y) != -1;};
 
    // If the point (x,y) is in place i, return a real number between 0 and 1
-   // to give its relative position in the place. For example, a value of 
+   // to give its relative position in the place. For example, a value of
    // 0.1 means that the point is near from the common border of places i and i-1,
-   // and a value of 0.5 indicates a position in the middle of the place i. 
-   this.ratioPositionInPlace = function(x,y) 
+   // and a value of 0.5 indicates a position in the middle of the place i.
+   this.ratioPositionInPlace = function(x,y)
    {
       var c0 = this.placeCenter(0), c1 = this.placeCenter(1);
       var c0p = [x - c0[0], y - c0[1]];
       var c0c1 = [c1[0] - c0[0], c1[1] - c0[1]];
       var prodScal = c0p[0]*c0c1[0] + c0p[1]*c0c1[1];
-      var posAbs = parseFloat(prodScal) / parseFloat(c0c1[0]*c0c1[0] + c0c1[1]*c0c1[1]) + 0.5;     
-      return posAbs - this.placeId(x,y);     
+      var posAbs = parseFloat(prodScal) / parseFloat(c0c1[0]*c0c1[0] + c0c1[1]*c0c1[1]) + 0.5;
+      return posAbs - this.placeId(x,y);
    };
 
    /*
@@ -134,21 +135,24 @@ function _container(dragAndDropSystem,ident,cx, cy, nbPlaces, widthPlace, height
          return null;
 
       if (this.dropMode == 'replace')
-         return action(this, pos,'replace'); 
-         
+         return action(this, pos,'replace');
+
+      if (this.dropMode == 'swap')
+          return action(this,pos,'swap');
+
       if (this.dropMode == 'insert-replace')
       {
          if (ratio < 0.25)
-            return action(this, pos, 'insert');          
+            return action(this, pos, 'insert');
          if (ratio > 0.75 && pos+1 < this.nbPlaces)
             return action(this, pos+1, 'insert');
          return action(this,pos,'replace');
       }
-   
+
       if (this.dropMode == 'insert')
       {
          if (ratio < 0.25)
-            return action(this, pos, 'insert');          
+            return action(this, pos, 'insert');
          if (ratio > 0.75 && pos+1 < this.nbPlaces)
             return action(this, pos+1, 'insert');
          return null;
@@ -157,7 +161,7 @@ function _container(dragAndDropSystem,ident,cx, cy, nbPlaces, widthPlace, height
       if (this.dropMode == 'insertBefore')
       {
          if (ratio < 0.75)
-            return action(this, pos, 'insert');          
+            return action(this, pos, 'insert');
          else if (ratio > 0.75 && pos+1 < this.nbPlaces)
             return action(this, pos+1, 'insert');
          else
@@ -177,12 +181,14 @@ function _container(dragAndDropSystem,ident,cx, cy, nbPlaces, widthPlace, height
       for (var i = 0; i < this.nbPlaces; i++)
          res[i] = this.draggableElements[i];
       res[this.nbPlaces] = null;
-      
+
       //removal
       if (this == srcCont)
       {
          if (this.dropMode == 'replace')
             res[srcPos] = null;
+         else if (this.dropMode == 'swap')
+            res[srcPos] = this.draggableElements[dstPos];
          else
          {
             var i = srcPos;
@@ -200,14 +206,16 @@ function _container(dragAndDropSystem,ident,cx, cy, nbPlaces, widthPlace, height
       {
          if (dropType == 'replace')
             res[dstPos] = el;
-         else
+         else if (dropType == 'swap')
+            res[dstPos] = el;
+	 else
          {
             var end = dstPos;
             while(end < this.nbPlaces && res[end] != null)
                end++;
             for (var i = end; i > dstPos; i--)
                res[i] = res[i-1];
-            res[dstPos] = el; 
+            res[dstPos] = el;
          }
       }
 
@@ -215,7 +223,7 @@ function _container(dragAndDropSystem,ident,cx, cy, nbPlaces, widthPlace, height
    };
 
 //Draw places
-   this.placeBG = component(0,0,placeBackgroundArray,this.dragAndDropSystem.paper); 
+   this.placeBG = component(0,0,placeBackgroundArray,this.dragAndDropSystem.paper);
    for (var iPlace = 0; iPlace < this.nbPlaces; iPlace++)
    {
       var c = this.placeCenter(iPlace);
@@ -233,7 +241,7 @@ function _container(dragAndDropSystem,ident,cx, cy, nbPlaces, widthPlace, height
 
    this.createDraggable = function(ident, position, shapesArray)
    {
-      this.dragAndDropSystem.addDraggableElement(ident, this, position, 
+      this.dragAndDropSystem.addDraggableElement(ident, this, position,
          new _component(this.placeCenter(position)[0], this.placeCenter(position)[1], shapesArray,this.dragAndDropSystem.paper) );
 
       if (this.type == 'source')
@@ -252,7 +260,7 @@ function _container(dragAndDropSystem,ident,cx, cy, nbPlaces, widthPlace, height
          cloneArray[i] = this.sourceElemArray[i].clone();
       component(this.cx, this.cy, cloneArray,this.dragAndDropSystem.paper)
 
-      this.createDraggable(this.ident, 0, this.sourceElemArray);  
+      this.createDraggable(this.ident, 0, this.sourceElemArray);
    }
 
 
@@ -276,8 +284,8 @@ function _container(dragAndDropSystem,ident,cx, cy, nbPlaces, widthPlace, height
             if (x >= el.component.cx - this.widthPlace/2 - 1 && x <= el.component.cx + this.widthPlace/2 + 1)
                if (y >= el.component.cy - this.heightPlace/2 - 1 && y <= el.component.cy + this.heightPlace/2 + 1)
                   return el;
-               
-         }  
+
+         }
       return null;
    };
 
@@ -290,12 +298,12 @@ function _container(dragAndDropSystem,ident,cx, cy, nbPlaces, widthPlace, height
    this.showIndicator = function(act)
    {
       if (this.dragDisplayMode != 'marker')
-         return;     
+         return;
 
       var paper = this.dragAndDropSystem.paper;
       var c = this.placeCenter(act.dstPos);
       var w = this.widthPlace, h = this.heightPlace;
-      
+
       if (act.dropType == 'replace')
          this.indicator = paper.rect(c[0]-w/2,c[1]-h/2,w,h).attr({'stroke' : 'red', 'stroke-width' : '4'});
 
@@ -305,21 +313,21 @@ function _container(dragAndDropSystem,ident,cx, cy, nbPlaces, widthPlace, height
          if (this.direction == 'vertical')
          {
             var y = (prevC[1] + c[1])/2;
-            this.indicator = paper.rect(c[0]-3*w/4,y,3*w/2,1).attr({'stroke' : 'red', 'stroke-width' : '4'});    
-         }        
+            this.indicator = paper.rect(c[0]-3*w/4,y,3*w/2,1).attr({'stroke' : 'red', 'stroke-width' : '4'});
+         }
          else
          {
             var x = (prevC[0] + c[0])/2;
             this.indicator = paper.rect(x,c[1]-3*h/4,1,3*h/2).attr({'stroke' : 'red', 'stroke-width' : '4'});
          }
-      }        
+      }
    };
 
    this.hideIndicator = function()
    {
       if (this.indicator != null)
          this.indicator.remove();
-      this.indicator = null;     
+      this.indicator = null;
    };
 
 // update source
@@ -372,12 +380,12 @@ this.updateSource = function()
       this.placeHolder.hide();
       var intermed = this.getElementsAfterDrop(srcCont, srcPos, dstCont, dstPos, dropType);
 
-      if (this.dragDisplayMode == 'preview')       
+      if (this.dragDisplayMode == 'preview')
          for (var i = 0; i <= this.nbPlaces; i++)
          {
             var center = this.placeCenter(i);
             if (intermed[i] != null)
-               if (intermed[i] == srcCont.draggableElements[srcPos])  
+               if (intermed[i] == srcCont.draggableElements[srcPos])
                {
                   this.placeHolder.show();
                   this.placeHolder.placeAt(center[0], center[1]);
@@ -389,9 +397,9 @@ this.updateSource = function()
                {
                   intermed[i].component.placeAtWithAnim(center[0], center[1], this.timeAnim);
                   intermed[i].show();
-               }           
-         }  
-      
+               }
+         }
+
 
       if (this.dragDisplayMode == 'marker')
       {
@@ -446,7 +454,7 @@ function container(_params)
    {
       if (params.align != 'top' && params.align != 'bottom' && params.align != 'left' && params.align != 'right')
          alert('align should be \'top\' or \'bottom\' or \'left\' or \'right\'');
-   
+
       if (params.align == 'top' || params.align == 'bottom')
          params.direction = 'vertical';
       else
@@ -479,36 +487,35 @@ function container(_params)
    {
       var paper = params.dragAndDropSystem.paper;
       var w = params.widthPlace, h = params.heightPlace;
-      params.placeBackgroundArray = [paper.rect(-w/2,-h/2,w,h).attr('fill','blue')];            
+      params.placeBackgroundArray = [paper.rect(-w/2,-h/2,w,h).attr('fill','blue')];
    }
 
 //Source
    if (params.type == 'source')
    {
       if (params.dropMode == undefined)
-         params.dropMode = 'replace';  
-      
+         params.dropMode = 'replace';
+
       params.nbPlaces = 1;
 
       if (params.sourceElemArray == undefined)
          alert('sourceElemArray should be defined');
    }
 
-//List   
+//List
    if (params.type == 'list')
    {
       if (params.dropMode == undefined)
-         params.dropMode = 'insert';               
+         params.dropMode = 'insert';
 
       if (params.nbPlaces == undefined)
          params.nbPlaces = 5;
-   }     
+   }
 
    return new _container(
       params.dragAndDropSystem, params.ident,
       params.cx, params.cy, params.nbPlaces, params.widthPlace, params.heightPlace,
-      params.direction, params.align, 
+      params.direction, params.align,
       params.dropMode, params.dragDisplayMode,
       params.placeBackgroundArray, params.type, params.sourceElemArray);
 }
-
