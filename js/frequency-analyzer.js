@@ -16,6 +16,7 @@ function frequency_analyzer(iTextInput, iFont) {
     this.mArrayAccentLower = ['â', 'ã', 'ä', 'à', 'á', 'å', 'ç', 'è', 'é', 'ê', 'ë', 'ì', 'í', 'î', 'ï', 'ñ', 'ò', 'ó', 'ô', 'õ', 'ö', 'ø', 'ù', 'ú', 'û', 'ü', 'ý'];
     this.mArrayAccentUpper = ['Â', 'Ã', 'Ä', 'À', 'Á', 'Å', 'Ç', 'È', 'É', 'Ê', 'Ë', 'Ì', 'Í', 'Î', 'Ï', 'Ñ', 'Ò', 'Ó', 'Ô', 'Õ', 'Ö', 'Ø', 'Ù', 'Ú', 'Û', 'Ü', 'Ý'];
     this.mArrayPunct = ['!', '"', '#', '$', '%', '&', '(', ')', '*', '+', ',', '\\', '-', '.', '/' , ':', ';' , '<',  '=', '>', '?' , '@' , '_', '`', '{', '|', '}', '~', '^' ,'[', ']'];
+    this.mArraySpace = [' '];
     this.mTokens = null;
     this.mFrqAlpha = true;
     this.mMinifyInput = false;
@@ -224,6 +225,10 @@ function frequency_analyzer(iTextInput, iFont) {
 
 	if (this.mOptions.withPunctuation) {
 	    this.pushKeyValue(lRes, this.mArrayPunct);
+	}
+
+	if (this.mOptions.withSpace) {
+	    this.pushKeyValue(lRes, this.mArraySpace);
 	}
 	return lRes;
     }
@@ -496,8 +501,6 @@ function frequency_analyzer(iTextInput, iFont) {
 	var lInc = 90;
 	var lRes = 100;
 
-	if (this.mOptions.withSpace) {
-	}
 	if (this.mOptions.withPunctuation) {
 	    lRes += lInc;
 	}
@@ -512,6 +515,9 @@ function frequency_analyzer(iTextInput, iFont) {
 	    if (this.mOptions.withAccent) {
 		lRes += lInc;
 	    }
+	}
+	if (this.mOptions.withSpace) {
+	    lRes += lInc;
 	}
 	return lRes;
     }
@@ -542,6 +548,7 @@ function frequency_analyzer(iTextInput, iFont) {
 	var lCxDigit = 130;
 	var lCxAccent = 342;
 	var lCxPunct = 392;
+	var lCxSpace = 20;
 	var lCyInc = 80;
 	this.generateDragContainer(iMap, iFontKey, lPaper, lDragAndDrop,
 				 lCxAlpha, lCy, that.mArrayAlphaLower.length,
@@ -604,6 +611,13 @@ function frequency_analyzer(iTextInput, iFont) {
 	}
 
 	if (this.mOptions.withSpace) {
+	    this.generateDragContainer(iMap, iFontKey, lPaper, lDragAndDrop,
+				       lCxSpace, lCy, that.mArraySpace.length,
+				       'Space',
+				       function(c) {
+					   return that.mArraySpace.indexOf(c) >= 0;
+				       });
+	    lCy += lCyInc;
 	}
 
     }
