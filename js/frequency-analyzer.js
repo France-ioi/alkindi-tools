@@ -1,7 +1,7 @@
 function frequency_analyzer(iTextInput, iFont) {
     this.mTextInput = iTextInput;
     this.mFont = iFont;
-    this.mLimitRef = 20;
+    this.mLimitRef = 16;
     this.mMapLang = new Map();
     this.mOptions = null;
     this.mObjects = null;
@@ -92,6 +92,7 @@ function frequency_analyzer(iTextInput, iFont) {
     }
 
 
+    var that = this;
 
     this.generateChartsContent = function(iFont, iKeys, iData) {
 	var lContent = {
@@ -106,13 +107,13 @@ function frequency_analyzer(iTextInput, iFont) {
             },
             xAxis: {
 		categories: iKeys,
-		crosshair: true,
 		labels: {
 		    style: {
 			fontFamily: iFont,
 			fontSize: '16px'
 		    }
-		}
+		},
+		max: that.mLimitRef
             },
 	    yAxis: {
 		title: {
@@ -427,7 +428,7 @@ function frequency_analyzer(iTextInput, iFont) {
 
 	    this.mKeys = [];
 	    this.mData = [];
-	    for (var i = 0, len = this.mObjects.length; i < len && i < this.mLimitRef; i++) {
+	    for (var i = 0, len = this.mObjects.length; i < len; i++) {
 		var lItem = this.mObjects[i];
 		this.mKeys.push(lItem.key);
 		this.mData.push(lItem.value);
@@ -463,7 +464,7 @@ function frequency_analyzer(iTextInput, iFont) {
 	this.sortFrq(lObjects, false);
 
 
-	for (var i = 0, len = lObjects.length; i < this.mLimitRef; i++) {
+	for (var i = 0, len = lObjects.length; i < len; i++) {
 	    var lItem = lObjects[i];
 
 	    lKeys.push(lItem.key);
@@ -832,6 +833,7 @@ function frequency_analyzer(iTextInput, iFont) {
 	    lFrq.push({key: key, value: value});
 	});
 	this.sortFrq(lFrq, false);
+	var that = this;
 
 	for (var i = 0; i < this.mSub.length; ++i) {
 	    var lItem = this.mSub[i];
@@ -846,12 +848,9 @@ function frequency_analyzer(iTextInput, iFont) {
 	    }
 	    var lValue2 = lMapRef.get(lKey2);
 
-	    lKeys.push('<span style="font-size: 16px; font-family: '+ lFont + ';">' + lKey1 + '</span><span style="margin-left: 5px; font-size: 16px;"> ' + lKey2 + '</span>');
+	    lKeys.push('<span style="font-size: 12px; font-family: '+ lFont + ';">' + lKey1 + '</span><span style="margin-left: 5px; font-size: 12px;"> ' + lKey2 + '</span>');
 	    lData1.push(lValue1);
 	    lData2.push(lValue2);
-	    if (i == 10) {
-		break;
-	    }
 	}
 
 	var lContent = {
@@ -859,6 +858,7 @@ function frequency_analyzer(iTextInput, iFont) {
 		enabled: false
 	    },
             chart: {
+		renderTo: 'container',
 		type: 'column'
             },
             title: {
@@ -866,10 +866,7 @@ function frequency_analyzer(iTextInput, iFont) {
             },
             xAxis: {
 		categories: lKeys,
-		crosshair: true,
-		labels: {
-		    format: '<span style="font-size: 16px; font-family: '+ lFont + ';">{value}</span>',
-		}
+		max: that.mLimitRef
             },
 	    yAxis: {
 		title: {
@@ -880,10 +877,8 @@ function frequency_analyzer(iTextInput, iFont) {
 		enabled: false
             },
             series: [{
-		name: 'fréquence',
 		data: lData1
             }, {
-		name: 'fréquence',
 		data: lData2
             }],
 	    scrollbar: {

@@ -10,6 +10,6 @@
    "license": "MIT",
    "dependencies": {
        "jquery": "latest",
-       "highcharts": "latest"
+       "highstock-release": "latest"
    }
 }
