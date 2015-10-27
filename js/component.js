@@ -58,7 +58,7 @@ function _component(cx, cy, arrayElems, paper)
       return this;
    };
 
-   var animation = function(i, time) 
+   var animation = function(i, time)
    {
       return Raphael.animation({'transform' : 't' + that.cx + ',' + that.cy + that.oldTransforms[i]}, time, '');
    };
@@ -70,7 +70,7 @@ function _component(cx, cy, arrayElems, paper)
 
       for (var i = 0; i < this.elems.length; i++)
          this.elems[i].animate(animation(i,time));
-      return this;      
+      return this;
    };
 
    this.move = function(dx,dy) { this.placeAt(this.cx+dx,this.cy+dy); };
@@ -93,8 +93,8 @@ function _component(cx, cy, arrayElems, paper)
 		this.upDrag = upDrag;
 
       for (var i = 0; i < this.elems.length; i++)
-         this.elems[i].drag(function(dx,dy){that.moveDrag(dx,dy);}, 
-                            function(){that.startDrag();}, 
+         this.elems[i].drag(function(dx,dy){that.moveDrag(dx,dy);},
+                            function(){that.startDrag();},
                             function(){that.upDrag();});
       return this;
    };
@@ -107,29 +107,29 @@ function _component(cx, cy, arrayElems, paper)
 	this.clone = function()
 	{
 		var newArr = new Array();
-		for(var i = 0; i < this.nbEl; i++)	
+		for(var i = 0; i < this.nbEl; i++)
 		{
 			newArr[i] = this.elems[i].clone().attr('transform',this.oldTransforms[i]);
 		}
-		return new _component(this.cx,this.cy,newArr,this.paper);	
+		return new _component(this.cx,this.cy,newArr,this.paper);
 	};
 
    this.remove = function()
    {
-      for (var i = 0; i < this.elems.length; i++)  
-         this.elems[i].remove();    
+      for (var i = 0; i < this.elems.length; i++)
+         this.elems[i].remove();
    };
 
    this.toFront = function()
    {
       for (var i = 0; i < this.elems.length; i++)
          this.elems[i].toFront();
-      
+
    };
-   
+
    this.show = function()
    {
-      for (var i =0; i < this.nbEl; i++)  
+      for (var i =0; i < this.nbEl; i++)
          if (!this.elems[i].attr('transparent')) { // TODO: save original opacity attribute
             this.elems[i].attr('opacity','1');
          }
@@ -137,13 +137,13 @@ function _component(cx, cy, arrayElems, paper)
 
    this.hide = function()
    {
-      for (var i = 0; i < this.nbEl; i++) 
-         this.elems[i].attr('opacity','0');  
+      for (var i = 0; i < this.nbEl; i++)
+         this.elems[i].attr('opacity','0');
    };
 
    this.halfHide = function()
    {
-      for (var i = 0; i < this.nbEl; i++) 
+      for (var i = 0; i < this.nbEl; i++)
          if (!this.elems[i].attr('transparent')) {
             this.elems[i].attr('opacity','0.3');
          }
@@ -151,8 +151,3 @@ function _component(cx, cy, arrayElems, paper)
 }
 
 function component(cx, cy, arrayElems,paper){ return new _component(cx, cy, arrayElems,paper); }
-
-
-
-
-
