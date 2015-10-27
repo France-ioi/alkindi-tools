@@ -107,8 +107,14 @@ body {
     height: 300px;
 }
 
+.chart-sum {
+    width: 600px;
+    height: 300px;
+}
+
 .minify .chart-text,
-.minify .chart-ref {
+.minify .chart-ref,
+.minify .chart-sum {
     height: 60px;
 }
 
@@ -219,12 +225,17 @@ body {
     display: none;
 }
 
+.section-sum {
+    display: none;
+}
+
 .section-output {
 }
 
 .apply .section-frq,
 .apply .section-ref,
-.apply .section-sub {
+.apply .section-sub,
+.apply .section-sum {
     display: block;
 }
 

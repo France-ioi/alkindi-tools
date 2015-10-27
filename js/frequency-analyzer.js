@@ -23,6 +23,7 @@ function frequency_analyzer(iTextInput, iFont) {
     this.mMinifyFrq = false;
     this.mMinifyRef = false;
     this.mMinifySub = false;
+    this.mMinifySum = false;
     this.mMinifyOutput = false;
 
 
@@ -703,32 +704,65 @@ function frequency_analyzer(iTextInput, iFont) {
 	});
 	this.sortFrq(lFrq, false);
 
-	var lMap = new Array();
-	this.mSub = new Array();
-	var lMarked = new Array();
-	this.mArrayRef = new Array();
-	for (var i = 0; i < lRef.length; ++i) {
-	    var lKey = this.getNextAlphaFrom(this.mArrayRef);
-	    var lValue = lRef[i].key;
-	    if (i < lFrq.length) {
-		lKey = lFrq[i].key;
-	    }
-	    lMap.push({key: lKey, value: lValue});
-	    this.mArrayRef.push(lKey);
-	    this.mSub[i] = lValue;
+
+	var lMap = new Map();
+	for (var i = 0; i < lFrq.length && i < lRef.length; ++i) {
+	    var lItemFrq = lFrq[i];
+	    var lItemRef = lRef[i];
+
+	    lMap.set(lItemFrq.key, lItemRef.key);
 	}
-	this.updateSub(lMap, lFont);
-	this.updateTokensSub(this.mTokens, lMap);
+
+	var lKeys = new Array();
+	lKeys.push.apply(lKeys, this.mArrayAlphaLower);
+
+	if (this.mOptions.withUpperCase) {
+	    lKeys.push.apply(lKeys, this.mArrayAlphaUpper);
+	}
+	if (this.mOptions.withAccent) {
+	    lKeys.push.apply(lKeys, this.mArrayAccentLower);
+	    if (this.mOptions.withUpperCase) {
+		lKeys.push.apply(lKeys, this.mArrayAccentUpper);
+	    }
+	}
+	if (this.mOptions.withDigit) {
+	    lKeys.push.apply(lKeys, this.mArrayDigit);
+	}
+
+	if (this.mOptions.withPunctuation) {
+	    lKeys.push.apply(lKeys, this.mArrayPunct);
+	}
+
+	if (this.mOptions.withSpace) {
+	    lKeys.push.apply(lKeys, this.mArraySpace);
+	}
+
+	var lMark = new Array();
+	var lArray = new Array();
+	for (var i = 0; i < lKeys.length; ++i) {
+	    var lKey = lKeys[i];
+	    var lValue = lMap.get(lKey);
+	    if (lValue == null) {
+		lValue = this.getNextAlphaFrom(lKeys, lMark);
+	    }
+
+	    var s = {key: lKey, value: lValue};
+            lArray.push(s);
+	    lMark.push(lKey);
+	}
+
+	this.updateSub(lArray, lFont);
+	this.updateTokensSub(this.mTokens, lArray);
 	this.displayOutput(this.mTokens);
     }
 
-    this.getNextAlphaFrom = function(array) {
-	for (var i = 0; i < this.mArrayAlpha.length; ++i) {
-	    var lCharacter = this.mArrayAlpha[i];
+    this.getNextAlphaFrom = function(iRef, iMark) {
+	for (var i = 0; i < iRef.length; ++i) {
+	    var lCharacter = iRef[i];
 	    var lFound = false;
 
-	    for (var j = 0; j < this.mArrayRef.length; ++j) {
-		var lAlpha = this.mArrayRef[j];
+	    for (var j = 0; j < iMark.length; ++j) {
+		var lAlpha = iMark[j];
 		if (lCharacter === lAlpha) {
 		    lFound = true;
 		    break;
@@ -790,6 +824,15 @@ function frequency_analyzer(iTextInput, iFont) {
     this.clickSectionButtonSub = function() {
 	this.mMinifySub = !this.mMinifySub;
 	this.applySectionButtonSub();
+    }
+
+    this.applySectionButtonSum = function() {
+	this.minifySection(this.mMinifySum, '#section-button-sum', '#section-sum');
+    }
+
+    this.clickSectionButtonSum = function() {
+	this.mMinifySum = !this.mMinifySum;
+	this.applySectionButtonSum();
     }
 
     this.applySectionButtonOutput = function() {
