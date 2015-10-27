@@ -16,7 +16,7 @@
                           sinon un comportement replace.
      - "insertBefore" : comme insert, mais la zone de drop est plus du coté du début de la case, donc ca marche mieux
                         avec dragDisplayMode="marker".
-     - "swap"    : lorsqu'un objet est laché sur la case, l'objet actuel de la case est mis a la place de l'objet source.
+     - "swap"    : lorsqu'un objet est laché sur la case, l'objet actuel de la case est remplacé par l'objet source et vice versa.
   dragDisplayMode : peut valoir "preview" (pour voir le placeholder avec des tirés jaune)
                     ou "marker" (pour voir le trait rouge).
   placeBackgroundArray : définit le background que l'on met à chaque case (juste pour faire joli).
@@ -188,7 +188,7 @@ function _container(dragAndDropSystem,ident,cx, cy, nbPlaces, widthPlace, height
          if (this.dropMode == 'replace')
             res[srcPos] = null;
          else if (this.dropMode == 'swap')
-            res[srcPos] = this.draggableElements[dstPos];
+            res[srcPos] = dstCont.draggableElements[dstPos];
          else
          {
             var i = srcPos;
@@ -350,7 +350,7 @@ this.updateSource = function()
 
 // update views
 
-   this.timeAnim = 100;
+   this.timeAnim = this.dropMode == 'swap' ? 0 : 100;
 
    /*
      Demande de faire un affichage correspondant à l'état actuel

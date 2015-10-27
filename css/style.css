@@ -1,10 +1,12 @@
 body {
     font-family: 'Roboto', sans-serif;
 }
+
 .container {
     display: block;
     position: relative;
     margin-left: 50px;
+    margin-bottom: 50px;
 }
 
 .wrapper {
@@ -107,7 +109,7 @@ body {
 
 .minify .chart-text,
 .minify .chart-ref {
-    height: 100px;
+    height: 60px;
 }
 
 .display-order-wrapper {
@@ -199,6 +201,16 @@ body {
     display: none;
 }
 
+.generate-wrapper-sub {
+    width: 600px;
+    text-align: center;
+}
+
+.generate-button {
+    margin-top: 10px;
+}
+
+.minify .generate-wrapper-sub,
 .minify .sub-input {
     display: none;
 }
