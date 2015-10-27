@@ -15,7 +15,7 @@ function frequency_analyzer(iTextInput, iFont) {
     this.mArrayDigit = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
     this.mArrayAccentLower = ['â', 'ã', 'ä', 'à', 'á', 'å', 'ç', 'è', 'é', 'ê', 'ë', 'ì', 'í', 'î', 'ï', 'ñ', 'ò', 'ó', 'ô', 'õ', 'ö', 'ø', 'ù', 'ú', 'û', 'ü', 'ý'];
     this.mArrayAccentUpper = ['Â', 'Ã', 'Ä', 'À', 'Á', 'Å', 'Ç', 'È', 'É', 'Ê', 'Ë', 'Ì', 'Í', 'Î', 'Ï', 'Ñ', 'Ò', 'Ó', 'Ô', 'Õ', 'Ö', 'Ø', 'Ù', 'Ú', 'Û', 'Ü', 'Ý'];
-    this.mArrayPunct = ['!', '"', '#', '$', '%', '&', '(', ')', '*', '+', ',', '\\', '-', '.', '/' , ':', ';' , '<',  '=', '>', '?' , '@' , '_', '`', '{', '|', '}', '~', '^' ,'[', ']'];
+    this.mArrayPunct = ['!', '"', '#', '$', '%', '&', '(', ')', '*', '+', ',', '\\', '-', '.', '/' , ':', ';' , '<',  '=', '>', '?' , '@' , '_', '`', '’', '{', '|', '}', '~', '[', ']'];
     this.mArraySpace = [' '];
     this.mTokens = null;
     this.mFrqAlpha = true;
@@ -689,6 +689,8 @@ function frequency_analyzer(iTextInput, iFont) {
 	var lFont = this.mTokens.font;
 
 	var lLang = $('#frq-ref-language').val();
+	var lFrqAlpha = $('input[name="frq"]:checked').val() === "alpha";
+
 
 	var lMapRef = this.mMapLang.get(lLang);
 	var lRef = new Array();
@@ -714,7 +716,28 @@ function frequency_analyzer(iTextInput, iFont) {
 	}
 
 	var lKeys = new Array();
-	lKeys.push.apply(lKeys, this.mArrayAlphaLower);
+	var lAlphaLower = new Array();
+	lAlphaLower.push.apply(lAlphaLower, this.mArrayAlphaLower);
+	if (!lFrqAlpha) {
+	    lAlphaLower.sort(function (i1, i2) {
+		var lItem1 = lMapFrq.map.get(i1);
+		var lItem2 = lMapFrq.map.get(i2);
+		if (lItem1 == null) {
+		    lItem1 = 0;
+		}
+		if (lItem2 == null) {
+		    lItem2 = 0;
+		}
+
+		if (lItem1 < lItem2) {
+		    return 1;
+		} else if (lItem1 > lItem2) {
+		    return -1;
+		}
+		return 0;
+	    });
+	}
+	lKeys.push.apply(lKeys, lAlphaLower);
 
 	if (this.mOptions.withUpperCase) {
 	    lKeys.push.apply(lKeys, this.mArrayAlphaUpper);
@@ -738,17 +761,20 @@ function frequency_analyzer(iTextInput, iFont) {
 	}
 
 	var lMark = new Array();
+	lMap.forEach(function(value, key) {
+	    lMark.push(value);
+	});
 	var lArray = new Array();
 	for (var i = 0; i < lKeys.length; ++i) {
 	    var lKey = lKeys[i];
 	    var lValue = lMap.get(lKey);
 	    if (lValue == null) {
 		lValue = this.getNextAlphaFrom(lKeys, lMark);
+		lMark.push(lValue);
 	    }
 
 	    var s = {key: lKey, value: lValue};
             lArray.push(s);
-	    lMark.push(lKey);
 	}
 
 	this.updateSub(lArray, lFont);
