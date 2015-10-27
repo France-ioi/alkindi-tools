@@ -1,5 +1,6 @@
-function frequency_analyzer(iTextInput) {
+function frequency_analyzer(iTextInput, iFont) {
     this.mTextInput = iTextInput;
+    this.mFont = iFont;
     this.mLimitRef = 20;
     this.mMapLang = new Map();
     this.mOptions = null;
@@ -8,6 +9,7 @@ function frequency_analyzer(iTextInput) {
     this.mData = null;
     this.mLastAlpha = true;
     this.mSub = null;
+    this.mMapSub = null;
     this.mArrayAlphaLower = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
     this.mArrayAlphaUpper = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
     this.mArrayDigit = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
@@ -16,7 +18,6 @@ function frequency_analyzer(iTextInput) {
     this.mArrayPunct = ['!', '"', '#', '$', '%', '&', '(', ')', '*', '+', ',', '\\', '-', '.', '/' , ':', ';' , '<',  '=', '>', '?' , '@' , '_', '`', '{', '|', '}', '~', '^' ,'[', ']'];
     this.mTokens = null;
     this.mFrqAlpha = true;
-    this.mArrayRef = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
     this.mMinifyInput = false;
     this.mMinifyFrq = false;
     this.mMinifyRef = false;
@@ -274,7 +275,7 @@ function frequency_analyzer(iTextInput) {
 		lMute = true;
 	    }
 
-	    if (!lWithPunctuation && lRef.match('[\u2000-\u206F\u2E00-\u2E7F\\\'!"#$%&()*+,\-.\/:;<=>?@_`{|}~^\\[\\]]')) {
+	    if (!lWithPunctuation && this.mArrayPunct.indexOf(lRef) >= 0) {
 		lMute = true;
 	    }
 
@@ -285,7 +286,7 @@ function frequency_analyzer(iTextInput) {
 		}
 	    }
 
-	    if (!lWithDigit && lRef.match('[0-9]')) {
+	    if (!lWithDigit && this.mArrayDigit.indexOf(lRef) >= 0) {
 		lMute = true;
 	    }
 
@@ -298,10 +299,9 @@ function frequency_analyzer(iTextInput) {
 
 	    lTokens.push({ref: lRef, value: lValue, output: lValue, mute: lMute, withAccent: lWithAccent, fromUpperCase: lFromUpperCase});
 	}
-	var lFont = this.getAlphaFont();
+	var lFont = this.mFont;
 	return {font: lFont, tokens: lTokens};
     }
-
 
 
     this.tokensToText = function(iTokens) {
@@ -459,9 +459,9 @@ function frequency_analyzer(iTextInput) {
 	$('#chart-ref').highcharts(lContent);
     }
 
-    this.generateDragContainer = function(iMap, iFontKey, iPaper, iDragAndDrop, iCx, iCy, iSize, f) {
+    this.generateDragContainer = function(iMap, iFontKey, iPaper, iDragAndDrop, iCx, iCy, iSize, iId, f) {
 	dragAndDropContainer = iDragAndDrop.addContainer({
-	    ident : 'seq',
+	    ident : iId,
 	    cx : iCx,
 	    cy : iCy,
 	    widthPlace : 25,
@@ -471,6 +471,7 @@ function frequency_analyzer(iTextInput) {
 	});
 
 	var iPos = 0;
+	this.mMapSub.set(iId, []);
 	for (var i = 0; i < iMap.length; i++) {
 	    var lItem = iMap[i];
 	    var lKey = lItem.key;
@@ -482,7 +483,9 @@ function frequency_analyzer(iTextInput) {
 		var c = iPaper.rect(-25/2,-25/2,25,25).attr('fill', 'white');
 		var t = iPaper.text(0, 0, lValue).attr({'font-size': 14, 'font-weight': 'bold'});
 		dragAndDropContainer.createDraggable(iPos + 1, iPos, [c,t]);
-		this.mSub.push(lValue);
+		var s = {key: lKey, value: lValue};
+		this.mSub.push(s);
+		this.mMapSub.get(iId).push(s);
 		++iPos;
 	    }
 	}
@@ -533,6 +536,7 @@ function frequency_analyzer(iTextInput) {
 	    }
 	});
 	this.mSub = new Array();
+	this.mMapSub = new Map();
 	var lCy = 80;
 	var lCxAlpha = 330;
 	var lCxDigit = 130;
@@ -541,6 +545,7 @@ function frequency_analyzer(iTextInput) {
 	var lCyInc = 80;
 	this.generateDragContainer(iMap, iFontKey, lPaper, lDragAndDrop,
 				 lCxAlpha, lCy, that.mArrayAlphaLower.length,
+				   'AlphaLower',
 				 function(c) {
 				     return that.mArrayAlphaLower.indexOf(c) >= 0;
 				 });
@@ -549,6 +554,7 @@ function frequency_analyzer(iTextInput) {
 	if (this.mOptions.withUpperCase) {
 	    this.generateDragContainer(iMap, iFontKey, lPaper, lDragAndDrop,
 				       lCxAlpha, lCy, that.mArrayAlphaUpper.length,
+				       'AlphaUpper',
 				       function(c) {
 					   return that.mArrayAlphaUpper.indexOf(c) >= 0;
 				       });
@@ -558,6 +564,7 @@ function frequency_analyzer(iTextInput) {
 	if (this.mOptions.withAccent) {
 	    this.generateDragContainer(iMap, iFontKey, lPaper, lDragAndDrop,
 				       lCxAccent, lCy, that.mArrayAccentLower.length,
+				       'AccentLower',
 				       function(c) {
 					   return that.mArrayAccentLower.indexOf(c) >= 0;
 				       });
@@ -568,6 +575,7 @@ function frequency_analyzer(iTextInput) {
 	    if (this.mOptions.withAccent) {
 		this.generateDragContainer(iMap, iFontKey, lPaper, lDragAndDrop,
 					   lCxAccent, lCy, that.mArrayAccentUpper.length,
+					   'AccentUpper',
 					   function(c) {
 					       return that.mArrayAccentUpper.indexOf(c) >= 0;
 					   });
@@ -578,6 +586,7 @@ function frequency_analyzer(iTextInput) {
 	if (this.mOptions.withDigit) {
 	    this.generateDragContainer(iMap, iFontKey, lPaper, lDragAndDrop,
 				       lCxDigit, lCy, that.mArrayDigit.length,
+				       'Digit',
 				       function(c) {
 					   return that.mArrayDigit.indexOf(c) >= 0;
 				       });
@@ -587,6 +596,7 @@ function frequency_analyzer(iTextInput) {
 	if (this.mOptions.withPunctuation) {
 	    this.generateDragContainer(iMap, iFontKey, lPaper, lDragAndDrop,
 				       lCxPunct, lCy, that.mArrayPunct.length,
+				       'Punctuation',
 				       function(c) {
 					   return that.mArrayPunct.indexOf(c) >= 0;
 				       });
@@ -598,21 +608,27 @@ function frequency_analyzer(iTextInput) {
 
     }
 
-    this.generateNewSub = function(srcCont, srcPos, dstCont, dstPos, type) {
-	var l = this.mSub[srcPos];
-	this.mSub[srcPos] = this.mSub[dstPos];
-	this.mSub[dstPos] = l;
-
-	var lSub = this.mSub;
-	var lMap = new Array();
-
+    this.subReplace = function(iKey, iValue) {
 	for (var i = 0; i < this.mSub.length; ++i) {
-	    var lKey = this.mArrayRef[i];
-	    var lValue = this.mSub[i];
-	    lMap.push({key: lKey, value: lValue});
+	    var lItem = this.mSub[i];
+	    if (lItem.key === iKey) {
+		lItem.value = iValue;
+		break;
+	    }
 	}
+    }
 
-	this.updateTokensSub(this.mTokens, lMap);
+    this.generateNewSub = function(srcCont, srcPos, dstCont, dstPos, type) {
+	var lSrc = this.mMapSub.get(srcCont)[srcPos];
+	var lDst = this.mMapSub.get(dstCont)[dstPos];
+
+	var lSrcValue = lSrc.value;
+	var lDstValue = lDst.value;
+
+	this.subReplace(lSrc.key, lDstValue);
+	this.subReplace(lDst.key, lSrcValue);
+
+	this.updateTokensSub(this.mTokens, this.mSub);
 	this.displayOutput(this.mTokens);
     }
 
@@ -640,13 +656,8 @@ function frequency_analyzer(iTextInput) {
 	$('textarea#textarea-output').val(lTextOutput);
     }
 
-    this.getAlphaFont = function() {
-	var lFont = $('#alpha-font option:selected').val();
-	return lFont;
-    }
-
     this.changeAlphaFont = function() {
-	var lFont = this.getAlphaFont();
+	var lFont = this.mFont;
 
 	if (lFont === 'alien') {
 	    $('textarea#textarea-input').css('font-family', "alien");

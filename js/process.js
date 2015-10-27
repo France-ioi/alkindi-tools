@@ -2,6 +2,6 @@ var lTextInput = "Hk dwhrsd oktrhdtqr ezlhkkdr c’zsszptdr bqxoszmzkxshptdr, kd
 
 
 $(function () {
-    var lAnalyzer = new frequency_analyzer(lTextInput);
+    var lAnalyzer = new frequency_analyzer(lTextInput, 'latin');
     lAnalyzer.init();
 });
