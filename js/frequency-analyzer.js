@@ -25,7 +25,7 @@ function frequency_analyzer(iTextInput, iFont) {
     this.mMinifySub = false;
     this.mMinifySum = false;
     this.mMinifyOutput = false;
-
+    this.mShowSum = false;
 
     this.init = function() {
 	this.initRefLang();
@@ -36,6 +36,8 @@ function frequency_analyzer(iTextInput, iFont) {
 	this.applySectionButtonRef();
 	this.applySectionButtonSub();
 	this.applySectionButtonOutput();
+	this.applySumButton();
+
 	$('textarea#textarea-input').val(this.mTextInput);
 
 	var that = this;
@@ -84,6 +86,9 @@ function frequency_analyzer(iTextInput, iFont) {
 	    that.clickSectionButtonOutput();
 	});
 
+	$('#sum-button').click(function() {
+	    that.clickSumButton();
+	});
     }
 
 
@@ -125,6 +130,9 @@ function frequency_analyzer(iTextInput, iFont) {
 		name: 'fréquence',
 		data: iData
             }],
+	    scrollbar: {
+		enabled: true
+	    },
 	    exporting: {
 		enabled: false
 	    },
@@ -408,6 +416,7 @@ function frequency_analyzer(iTextInput, iFont) {
 	this.updateChartText(lFont);
 	var lMapId = this.getMapId();
 	this.updateSub(lMapId, lFont);
+	this.updateChartSum();
 	this.displayOutput(this.mTokens);
     }
 
@@ -552,11 +561,11 @@ function frequency_analyzer(iTextInput, iFont) {
 	var lCxSpace = 20;
 	var lCyInc = 80;
 	this.generateDragContainer(iMap, iFontKey, lPaper, lDragAndDrop,
-				 lCxAlpha, lCy, that.mArrayAlphaLower.length,
+				   lCxAlpha, lCy, that.mArrayAlphaLower.length,
 				   'AlphaLower',
-				 function(c) {
-				     return that.mArrayAlphaLower.indexOf(c) >= 0;
-				 });
+				   function(c) {
+				       return that.mArrayAlphaLower.indexOf(c) >= 0;
+				   });
 	lCy += lCyInc;
 
 	if (this.mOptions.withUpperCase) {
@@ -620,7 +629,6 @@ function frequency_analyzer(iTextInput, iFont) {
 				       });
 	    lCy += lCyInc;
 	}
-
     }
 
     this.subReplace = function(iKey, iValue) {
@@ -643,6 +651,7 @@ function frequency_analyzer(iTextInput, iFont) {
 	this.subReplace(lSrc.key, lDstValue);
 	this.subReplace(lDst.key, lSrcValue);
 
+	this.updateChartSum();
 	this.updateTokensSub(this.mTokens, this.mSub);
 	this.displayOutput(this.mTokens);
     }
@@ -778,6 +787,7 @@ function frequency_analyzer(iTextInput, iFont) {
 	}
 
 	this.updateSub(lArray, lFont);
+	this.updateChartSum();
 	this.updateTokensSub(this.mTokens, lArray);
 	this.displayOutput(this.mTokens);
     }
@@ -799,6 +809,95 @@ function frequency_analyzer(iTextInput, iFont) {
 	    }
 	}
 	return '_';
+    }
+
+    this.updateChartSum = function() {
+	var lFont = this.mFont;
+	var lLang = $('#frq-ref-language').val();
+
+	var lKeys  = [];
+	var lData1 = [];
+	var lData2 = [];
+
+	var lMapRef = this.mMapLang.get(lLang);
+	var lRef = new Array();
+	lMapRef.forEach(function (value, key) {
+	    lRef.push({key: key, value: value});
+	});
+	this.sortFrq(lRef, false);
+
+	var lMapFrq = this.computeMapFrq(this.mTokens);
+	var lFrq = new Array();
+	lMapFrq.map.forEach(function (value, key) {
+	    lFrq.push({key: key, value: value});
+	});
+	this.sortFrq(lFrq, false);
+
+	for (var i = 0; i < this.mSub.length; ++i) {
+	    var lItem = this.mSub[i];
+	    var lKey1 = lItem.key;
+	    var lKey2 = lItem.value;
+
+	    var lValue1 = lMapFrq.map.get(lKey1);
+	    if (lValue1 == null) {
+		lValue1 = 0;
+	    } else {
+		lValue1 = lValue1 * 100 / lMapFrq.size;
+	    }
+	    var lValue2 = lMapRef.get(lKey2);
+
+	    lKeys.push('<span style="font-size: 16px; font-family: '+ lFont + ';">' + lKey1 + '</span><span style="margin-left: 5px; font-size: 16px;"> ' + lKey2 + '</span>');
+	    lData1.push(lValue1);
+	    lData2.push(lValue2);
+	    if (i == 10) {
+		break;
+	    }
+	}
+
+	var lContent = {
+	    legend: {
+		enabled: false
+	    },
+            chart: {
+		type: 'column'
+            },
+            title: {
+		text: ''
+            },
+            xAxis: {
+		categories: lKeys,
+		crosshair: true,
+		labels: {
+		    format: '<span style="font-size: 16px; font-family: '+ lFont + ';">{value}</span>',
+		}
+            },
+	    yAxis: {
+		title: {
+		    text: ''
+		}
+	    },
+            tooltip: {
+		enabled: false
+            },
+            series: [{
+		name: 'fréquence',
+		data: lData1
+            }, {
+		name: 'fréquence',
+		data: lData2
+            }],
+	    scrollbar: {
+		enabled: true
+	    },
+	    exporting: {
+		enabled: false
+	    },
+	    credits: {
+		enabled: false
+	    }
+	};
+
+	$('#chart-sum').highcharts(lContent);
     }
 
     this.minifySection = function(iBoolean, iButtonId, iSectionId) {
@@ -868,5 +967,20 @@ function frequency_analyzer(iTextInput, iFont) {
     this.clickSectionButtonOutput = function() {
 	this.mMinifyOutput = !this.mMinifyOutput;
 	this.applySectionButtonOutput();
+    }
+
+    this.applySumButton = function() {
+	if (this.mShowSum) {
+	    $('#root').addClass('show-sum');
+	    $('#sum-button').text('Cacher l\'histogramme');
+	} else {
+	    $('#root').removeClass('show-sum');
+	    $('#sum-button').text('Afficher l\'histogramme');
+	}
+    }
+
+    this.clickSumButton = function() {
+	this.mShowSum = !this.mShowSum;
+	this.applySumButton();
     }
 }

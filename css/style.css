@@ -108,14 +108,27 @@ body {
 }
 
 .chart-sum {
+    display: none;
     width: 600px;
     height: 300px;
 }
 
 .minify .chart-text,
-.minify .chart-ref,
-.minify .chart-sum {
+.minify .chart-ref {
     height: 60px;
+}
+
+.minify .chart-sum,
+.minify .button-sum {
+    display: none;
+}
+
+.show-sum .button-sum {
+    display: none;
+}
+
+.show-sum .chart-sum {
+    display: block;
 }
 
 .display-order-wrapper {
@@ -211,7 +224,8 @@ body {
     display: none;
 }
 
-.generate-wrapper-sub {
+.generate-wrapper-sub,
+.generate-wrapper-sum {
     width: 600px;
     text-align: center;
 }
