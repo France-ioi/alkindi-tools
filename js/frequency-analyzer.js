@@ -8,7 +8,12 @@ function frequency_analyzer(iTextInput) {
     this.mData = null;
     this.mLastAlpha = true;
     this.mSub = null;
-    this.mArrayAlpha = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+    this.mArrayAlphaLower = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+    this.mArrayAlphaUpper = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+    this.mArrayDigit = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    this.mArrayAccentLower = ['â', 'ã', 'ä', 'à', 'á', 'å', 'ç', 'è', 'é', 'ê', 'ë', 'ì', 'í', 'î', 'ï', 'ñ', 'ò', 'ó', 'ô', 'õ', 'ö', 'ø', 'ù', 'ú', 'û', 'ü', 'ý'];
+    this.mArrayAccentUpper = ['Â', 'Ã', 'Ä', 'À', 'Á', 'Å', 'Ç', 'È', 'É', 'Ê', 'Ë', 'Ì', 'Í', 'Î', 'Ï', 'Ñ', 'Ò', 'Ó', 'Ô', 'Õ', 'Ö', 'Ø', 'Ù', 'Ú', 'Û', 'Ü', 'Ý'];
+    this.mArrayPunct = ['!', '"', '#', '$', '%', '&', '(', ')', '*', '+', ',', '\\', '-', '.', '/' , ':', ';' , '<',  '=', '>', '?' , '@' , '_', '`', '{', '|', '}', '~', '^' ,'[', ']'];
     this.mTokens = null;
     this.mFrqAlpha = true;
     this.mArrayRef = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
@@ -193,11 +198,31 @@ function frequency_analyzer(iTextInput) {
 	this.mMapLang.set("en", lEn);
     }
 
+    this.pushKeyValue = function(iRes, iArray) {
+	for (var i = 0; i < iArray.length; ++i) {
+	    var lValue = iArray[i];
+	    iRes.push({key: lValue, value : lValue});
+	}
+    }
+
     this.getMapId = function() {
 	var lRes = new Array();
-	for (var i = 0; i < this.mArrayAlpha.length; ++i) {
-	    var lValue = this.mArrayAlpha[i];
-	    lRes.push({key: lValue, value : lValue});
+	this.pushKeyValue(lRes, this.mArrayAlphaLower);
+	if (this.mOptions.withUpperCase) {
+	    this.pushKeyValue(lRes, this.mArrayAlphaUpper);
+	}
+	if (this.mOptions.withAccent) {
+	    this.pushKeyValue(lRes, this.mArrayAccentLower);
+	    if (this.mOptions.withUpperCase) {
+		this.pushKeyValue(lRes, this.mArrayAccentUpper);
+	    }
+	}
+	if (this.mOptions.withDigit) {
+	    this.pushKeyValue(lRes, this.mArrayDigit);
+	}
+
+	if (this.mOptions.withPunctuation) {
+	    this.pushKeyValue(lRes, this.mArrayPunct);
 	}
 	return lRes;
     }
@@ -207,19 +232,18 @@ function frequency_analyzer(iTextInput) {
 	str = str.replace(/[Ç]/gi,      "C");
 	str = str.replace(/[ÈÉÊË]/gi,   "E");
 	str = str.replace(/[ÌÍÎÏ]/gi,   "I");
-	str = str.replace(/[Ð]/gi,      "D");
 	str = str.replace(/[Ñ]/gi,      "N");
 	str = str.replace(/[ÒÓÔÕÖØ]/gi, "O");
 	str = str.replace(/[ÙÚÛÜ]/gi,   "U");
 	str = str.replace(/[Ý]/gi,      "Y");
-	str = str.replace(/[àáâãäå]/gi, "a");
+	str = str.replace(/[âãäàáå]/gi, "a");
 	str = str.replace(/[ç]/gi,      "c");
 	str = str.replace(/[èéêë]/gi,   "e");
 	str = str.replace(/[ìíîï]/gi,   "i");
 	str = str.replace(/[ñ]/gi,      "n");
 	str = str.replace(/[òóôõöø]/gi, "o");
 	str = str.replace(/[ùúûü]/gi,   "u");
-	str = str.replace(/[ýÿ]/gi,     "y");
+	str = str.replace(/[ý]/gi,      "y");
 	return str;
     }
 
@@ -435,42 +459,69 @@ function frequency_analyzer(iTextInput) {
 	$('#chart-ref').highcharts(lContent);
     }
 
-    this.generateLowerLetter = function(iMap, iFontKey, paper, dragAndDrop) {
-	var size = iMap.length;
-	var w = 25, h = 25;
-	dragAndDropContainer = dragAndDrop.addContainer({
+    this.generateDragContainer = function(iMap, iFontKey, iPaper, iDragAndDrop, iCx, iCy, iSize, f) {
+	dragAndDropContainer = iDragAndDrop.addContainer({
 	    ident : 'seq',
-	    cx : 330,
-	    cy : 80,
+	    cx : iCx,
+	    cy : iCy,
 	    widthPlace : 25,
 	    heightPlace : 25,
-	    nbPlaces : size,
+	    nbPlaces : iSize,
 	    dropMode : 'swap'
 	});
 
-	for (var i = 0; i < size; i++) {
+	var iPos = 0;
+	for (var i = 0; i < iMap.length; i++) {
 	    var lItem = iMap[i];
 	    var lKey = lItem.key;
-	    var lValue = lItem.value;
+	    if (f(lKey)) {
+		var lValue = lItem.value;
 
-	    var u = paper.text(17 + i * 25, 40, lKey).attr({'font-family' : iFontKey, 'font-size': 18, 'font-weight': 'bold'});
+		var u = iPaper.text(17 + iPos * 25, iCy - 25, lKey).attr({'font-family' : iFontKey, 'font-size': 18, 'font-weight': 'bold'});
 
-	    var c = paper.rect(-w/2,-h/2,w,h).attr('fill', 'white');
-	    var t = paper.text(0,0, lValue).attr({'font-size': 14, 'font-weight': 'bold'});
-	    dragAndDropContainer.createDraggable(i+1, i, [c,t]);
-	    this.mSub.push(lValue);
+		var c = iPaper.rect(-25/2,-25/2,25,25).attr('fill', 'white');
+		var t = iPaper.text(0, 0, lValue).attr({'font-size': 14, 'font-weight': 'bold'});
+		dragAndDropContainer.createDraggable(iPos + 1, iPos, [c,t]);
+		this.mSub.push(lValue);
+		++iPos;
+	    }
 	}
+	return dragAndDropContainer;
     }
 
+    this.computeHeight = function() {
+	var lInc = 90;
+	var lRes = 100;
+
+	if (this.mOptions.withSpace) {
+	}
+	if (this.mOptions.withPunctuation) {
+	    lRes += lInc;
+	}
+	if (this.mOptions.withAccent) {
+	    lRes += lInc;
+	}
+	if (this.mOptions.withDigit) {
+	    lRes += lInc;
+	}
+	if (this.mOptions.withUpperCase) {
+	    lRes += lInc;
+	    if (this.mOptions.withAccent) {
+		lRes += lInc;
+	    }
+	}
+	return lRes;
+    }
 
     this.updateSub = function(iMap, iFontKey) {
 	var that = this;
 	$('#sub').empty();
+	var lHeight = this.computeHeight();
 	var lSubElement = document.getElementById('sub');
-	var paper = Raphael(lSubElement, 680, 100);
+	var lPaper = Raphael(lSubElement, 800, lHeight);
 
-	var dragAndDrop = DragAndDropSystem({
-	    paper : paper,
+	var lDragAndDrop = DragAndDropSystem({
+	    paper : lPaper,
 	    actionIfDropped : function(srcCont, srcPos, dstCont, dstPos, type) {
 		if (dstCont == null) {
 		    return false;
@@ -481,9 +532,70 @@ function frequency_analyzer(iTextInput) {
 		that.generateNewSub(srcCont, srcPos, dstCont, dstPos, type);
 	    }
 	});
-
 	this.mSub = new Array();
-	this.generateLowerLetter(iMap, iFontKey, paper, dragAndDrop);
+	var lCy = 80;
+	var lCxAlpha = 330;
+	var lCxDigit = 130;
+	var lCxAccent = 342;
+	var lCxPunct = 392;
+	var lCyInc = 80;
+	this.generateDragContainer(iMap, iFontKey, lPaper, lDragAndDrop,
+				 lCxAlpha, lCy, that.mArrayAlphaLower.length,
+				 function(c) {
+				     return that.mArrayAlphaLower.indexOf(c) >= 0;
+				 });
+	lCy += lCyInc;
+
+	if (this.mOptions.withUpperCase) {
+	    this.generateDragContainer(iMap, iFontKey, lPaper, lDragAndDrop,
+				       lCxAlpha, lCy, that.mArrayAlphaUpper.length,
+				       function(c) {
+					   return that.mArrayAlphaUpper.indexOf(c) >= 0;
+				       });
+	    lCy += lCyInc;
+	}
+
+	if (this.mOptions.withAccent) {
+	    this.generateDragContainer(iMap, iFontKey, lPaper, lDragAndDrop,
+				       lCxAccent, lCy, that.mArrayAccentLower.length,
+				       function(c) {
+					   return that.mArrayAccentLower.indexOf(c) >= 0;
+				       });
+	    lCy += lCyInc;
+	}
+
+	if (this.mOptions.withUpperCase) {
+	    if (this.mOptions.withAccent) {
+		this.generateDragContainer(iMap, iFontKey, lPaper, lDragAndDrop,
+					   lCxAccent, lCy, that.mArrayAccentUpper.length,
+					   function(c) {
+					       return that.mArrayAccentUpper.indexOf(c) >= 0;
+					   });
+		lCy += lCyInc;
+	    }
+	}
+
+	if (this.mOptions.withDigit) {
+	    this.generateDragContainer(iMap, iFontKey, lPaper, lDragAndDrop,
+				       lCxDigit, lCy, that.mArrayDigit.length,
+				       function(c) {
+					   return that.mArrayDigit.indexOf(c) >= 0;
+				       });
+	    lCy += lCyInc;
+	}
+
+	if (this.mOptions.withPunctuation) {
+	    this.generateDragContainer(iMap, iFontKey, lPaper, lDragAndDrop,
+				       lCxPunct, lCy, that.mArrayPunct.length,
+				       function(c) {
+					   return that.mArrayPunct.indexOf(c) >= 0;
+				       });
+	    lCy += lCyInc;
+	}
+
+	if (this.mOptions.withSpace) {
+	}
+
     }
 
     this.generateNewSub = function(srcCont, srcPos, dstCont, dstPos, type) {

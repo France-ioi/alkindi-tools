@@ -138,6 +138,10 @@ body {
     width: 100%;
 }
 
+.minify .sub-wrapper {
+    display: none;
+}
+
 .sub-content {
     display: inline-block;
     vertical-align: top;
