@@ -847,6 +847,9 @@ function frequency_analyzer(iTextInput, iFont) {
 		lValue1 = lValue1 * 100 / lMapFrq.size;
 	    }
 	    var lValue2 = lMapRef.get(lKey2);
+	    if (lValue2 === undefined || lValue2 == null) {
+		lValue2 = 0;
+	    }
 
 	    lKeys.push('<span style="font-size: 12px; font-family: '+ lFont + ';">' + lKey1 + '</span><span style="margin-left: 5px; font-size: 12px;"> ' + lKey2 + '</span>');
 	    lData1.push(lValue1);
