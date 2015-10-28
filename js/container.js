@@ -187,9 +187,10 @@ function _container(dragAndDropSystem,ident,cx, cy, nbPlaces, widthPlace, height
       {
          if (this.dropMode == 'replace')
             res[srcPos] = null;
-         else if (this.dropMode == 'swap')
+         else if (this.dropMode == 'swap') {
             res[srcPos] = dstCont.draggableElements[dstPos];
-         else
+	    res[srcPos].component.toFront();
+         } else
          {
             var i = srcPos;
             while(i+1 <= this.nbPlaces && this.draggableElements[i] != null)
