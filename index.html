@@ -29,38 +29,36 @@
 	     <span class="section-title">Texte à analyser : </span>
 	   </div>
 	   <div>
-	     <span class="textarea-wrapper">
-	       <textarea id="textarea-input" class="textarea-input"></textarea>
-	       <div class="apply-wrapper-input">
-		 <button class="apply-button" id="apply-input">Analyser</button>
-	       </div>
-	     </span>
-	     <span>
-	       <div class="options-wrapper">
-		 <div class="options-title">Options :</div>
-		 <div>
-		   <div class="checkbox-option">
-		     <input id="optionWithSpace" type="checkbox">inclure les espaces</input>
-		   </div>
+	     <div class="options-wrapper">
+	       <div class="options-title">Options :</div>
+	       <div>
+		 <div class="checkbox-option">
+		   <input id="optionWithSpace" type="checkbox">inclure les espaces</input>
+		 </div>
 
-		   <div class="checkbox-option">
-		     <input  id="optionWithPunctuation" type="checkbox">inclure la ponctuation</input>
-		   </div>
+		 <div class="checkbox-option">
+		   <input  id="optionWithPunctuation" type="checkbox">inclure la ponctuation</input>
+		 </div>
 
-		   <div class="checkbox-option">
-		     <input  id="optionWithAccent" type="checkbox">inclure les accents</input>
-		   </div>
+		 <div class="checkbox-option">
+		   <input  id="optionWithAccent" type="checkbox">inclure les accents</input>
+		 </div>
 
-		   <div class="checkbox-option">
-		     <input  id="optionWithDigit" type="checkbox">inclure les chiffres</input>
-		   </div>
+		 <div class="checkbox-option">
+		   <input  id="optionWithDigit" type="checkbox">inclure les chiffres</input>
+		 </div>
 
-		   <div class="checkbox-option">
-		     <input id="optionWithUpperCase" type="checkbox">différencier les majuscules</input>
-		   </div>
+		 <div class="checkbox-option">
+		   <input id="optionWithUpperCase" type="checkbox">différencier les majuscules</input>
 		 </div>
 	       </div>
-	     </span>
+	     </div>
+	   </div>
+	   <div class="textarea-wrapper">
+	     <textarea id="textarea-input" class="textarea-input"></textarea>
+	     <div class="apply-wrapper-input">
+	       <button class="apply-button" id="apply-input">Analyser</button>
+	     </div>
 	   </div>
 	 </div>
 
@@ -73,23 +71,8 @@
 	     <div class="chart-wrapper">
 	       <div id="chart-text" class="chart-text"></div>
 	     </div>
-
-
-	     <div class="display-order-wrapper">
-	       <div class="display-order-title">Ordre d'affichage :</div>
-	       <div>
-		 <form>
-		   <div class="display-order-item">
-		     <input class="frq" id="frq-alpha" type="radio" name="frq" value="alpha" checked>alphabétique</input>
-		   </div>
-		   <div class="display-order-item">
-		     <input class="frq" id="frq-fqz" type="radio" name="frq" value="fqz">fréquence décroissante</input>
-		   </div>
-		 </form>
-	       </div>
+	     <div id="frq-min" class="frq-min">
 	     </div>
-
-
 	   </div>
 	 </div>
 
@@ -106,6 +89,8 @@
 	       <option value="fr">fr</option>
 	       <option value="en">en</option>
 	     </select>
+	   </div>
+	   <div id="ref-min" class="ref-min">
 	   </div>
 	   <div class="generate-wrapper-sub">
 	     <button class="generate-button" id="sub-generate">Générer la substitution</button>
@@ -133,21 +118,6 @@
 	     </div>
 	   </div>
 	 </div>
-
-
-	 <!--div id="section-sum" class="section section-sum">
-	   <div>
-	     <span id="section-button-sum" class="section-button"></span>
-	     <span class="section-title">Récapitulatif : </span>
-	   </div>
-	   <div>
-	     <div class="chart-wrapper">
-	       <div id="chart-sum" class="chart-sum"></div>
-	     </div>
-	   </div>
-	 </div-->
-
-
 	 <div id="section-output" class="section section-output">
 	   <div>
 	     <span id="section-button-output" class="section-button"></span>

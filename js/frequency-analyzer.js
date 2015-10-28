@@ -1,13 +1,13 @@
 function frequency_analyzer(iTextInput, iFont) {
     this.mTextInput = iTextInput;
     this.mFont = iFont;
-    this.mLimitRef = 16;
+    this.mLimitRef = 18;
     this.mMapLang = new Map();
     this.mOptions = null;
     this.mObjects = null;
     this.mKeys = null;
     this.mData = null;
-    this.mLastAlpha = true;
+    this.mLastAlpha = false;
     this.mSub = null;
     this.mMapSub = null;
     this.mArrayAlphaLower = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
@@ -133,6 +133,9 @@ function frequency_analyzer(iTextInput, iFont) {
             }],
 	    scrollbar: {
 		enabled: true
+	    },
+	    rangeSelector: {
+		enabled: false
 	    },
 	    exporting: {
 		enabled: false
@@ -413,12 +416,13 @@ function frequency_analyzer(iTextInput, iFont) {
 	var lMapFrq = this.computeMapFrq(this.mTokens);
 	var lFont = this.mTokens.font;
 	this.computeObjects(lMapFrq);
-	this.mLastAlpha = $('input[name="frq"]:checked').val() === "alpha";
+	this.mLastAlpha = false;
 	this.updateChartText(lFont);
-	var lMapId = this.getMapId();
-	this.updateSub(lMapId, lFont);
-	this.updateChartSum();
-	this.displayOutput(this.mTokens);
+//	var lMapId = this.getMapId();
+//	this.updateSub(lMapId, lFont);
+//	this.updateChartSum();
+//	this.displayOutput(this.mTokens);
+	this.updateSubFromRef();
     }
 
     this.updateChartText = function(iFont) {
@@ -440,14 +444,15 @@ function frequency_analyzer(iTextInput, iFont) {
 	}
 	var lContent = this.generateChartsContent(iFont, this.mKeys, this.mData);
 	$('#chart-text').highcharts(lContent);
+	$('#frq-min').empty();
+	for (var i = 0; i < this.mObjects.length && i <= this.mLimitRef; i++) {
+	    var lKey = this.mObjects[i].key;
+	    $('#frq-min').append('<span class="frq-min-item" style="font-family: \'' + this.mFont + '\'">' + lKey + '</span>');
+	}
     }
 
     this.changeFrq = function() {
-	var lFrqAlpha = $('input[name="frq"]:checked').val() === "alpha";
-	if (this.mLastAlpha != lFrqAlpha) {
-	    this.mLastAlpha = lFrqAlpha;
-	    this.updateChartText(this.mTokens.font);
-	}
+	this.updateChartText(this.mTokens.font);
     }
 
     this.changeFrqRefLanguage = function() {
@@ -473,6 +478,12 @@ function frequency_analyzer(iTextInput, iFont) {
 
 	var lContent = this.generateChartsContent('Fréquence', lKeys, lData);
 	$('#chart-ref').highcharts(lContent);
+	$('#ref-min').empty();
+	for (var i = 0; i < lObjects.length && i <= this.mLimitRef; i++) {
+	    var lKey = lObjects[i].key;
+	    $('#ref-min').append('<span class="ref-min-item">' + lKey + '</span>');
+	}
+
     }
 
     this.generateDragContainer = function(iMap, iFontKey, iPaper, iDragAndDrop, iCx, iCy, iSize, iId, f) {
@@ -874,6 +885,11 @@ function frequency_analyzer(iTextInput, iFont) {
 	    yAxis: {
 		title: {
 		    text: ''
+		}
+	    },
+	    plotOptions: {
+		series: {
+		    animation: false
 		}
 	    },
             tooltip: {

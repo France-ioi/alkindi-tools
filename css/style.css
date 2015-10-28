@@ -13,7 +13,7 @@ body {
     display: block;
     position: relative;
     min-width: 300px;
-    max-width: 1024px;
+    max-width: 770px;
 }
 
 .title {
@@ -25,6 +25,7 @@ body {
 .section {
     display: block;
     margin-top: 20px;
+    width: 100%;
 }
 
 .section-button {
@@ -49,9 +50,8 @@ body {
 }
 
 .textarea-wrapper {
-    display: inline-block;
+    display: block;
     position: relative;
-    vertical-align: top;
 }
 
 .options-wrapper {
@@ -71,7 +71,7 @@ body {
 
 .textarea-input {
     margin-top: 10px;
-    width: 600px;
+    width: 100%;
     height: 100px;
     font-size: 16px;
 /*    resize: none;*/
@@ -85,8 +85,9 @@ body {
 
 .textarea-output {
     margin-top: 10px;
-    width: 600px;
+    width: 100%;
     height: 100px;
+    font-size: 16px;
 /*    resize: none;*/
 }
 
@@ -115,15 +116,38 @@ body {
 
 .minify .chart-text,
 .minify .chart-ref {
-    height: 60px;
-}
-
-.minify .chart-sum,
-.minify .button-sum {
     display: none;
 }
 
-.show-sum .button-sum {
+.ref-min,
+.frq-min {
+    display: none;
+}
+
+.minify .ref-min,
+.minify .frq-min {
+    display: block;
+    height: 20px;
+}
+
+.ref-min-item,
+.frq-min-item {
+    font-size: 16px;
+    margin: 0 5px;
+    width: 16px;
+    text-align: center;
+    float: left;
+}
+
+
+.show-sum .minify .chart-sum,
+.minify .chart-sum,
+.minify .sum-button,
+.show-sum .minify .sum-button {
+    display: none;
+}
+
+.minify .button-sum {
     display: none;
 }
 
