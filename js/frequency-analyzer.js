@@ -26,6 +26,7 @@ function frequency_analyzer(iTextInput, iFont) {
     this.mMinifySum = false;
     this.mMinifyOutput = false;
     this.mShowSum = false;
+    this.mOutputFull = false;
 
     this.init = function() {
 	this.initRefLang();
@@ -37,6 +38,7 @@ function frequency_analyzer(iTextInput, iFont) {
 	this.applySectionButtonSub();
 	this.applySectionButtonOutput();
 	this.applySumButton();
+	this.applyOutputButton();
 
 	$('textarea#textarea-input').val(this.mTextInput);
 
@@ -88,6 +90,10 @@ function frequency_analyzer(iTextInput, iFont) {
 
 	$('#sum-button').click(function() {
 	    that.clickSumButton();
+	});
+
+	$('#output-button').click(function() {
+	    that.clickOutputButton();
 	});
     }
 
@@ -687,9 +693,50 @@ function frequency_analyzer(iTextInput, iFont) {
 	}
     }
 
+    this.tokensToPairs = function(iTokens) {
+	var lRes = new Array();
+	var lTokens = iTokens.tokens;
+
+	for (var i = 0, len = lTokens.length; i < len; i++) {
+	    var lToken = lTokens[i];
+
+	    var lInput = lToken.ref;
+	    var lOutput = lToken.output;
+	    if (lToken.fromUpperCase) {
+		lOutput = lOutput.toUpperCase();
+	    }
+	    lRes.push({input: lInput, output: lOutput});
+	}
+	return lRes;
+    }
+
     this.displayOutput = function(iTokens) {
 	var lTextOutput = this.tokensToText(iTokens);
 	$('textarea#textarea-output').val(lTextOutput);
+
+	$('#output-content').empty();
+	var lPairs = this.tokensToPairs(iTokens);
+	for (var i = 0; i < lPairs.length; ++i) {
+
+	    var lPair = lPairs[i];
+
+	    var lWInput = '';
+	    var lWOutput = '';
+	    for (; i < lPairs.length &&
+		 lPairs[i].output !== ' '; ++i) {
+		lPair = lPairs[i];
+
+		lWInput  += lPair.input;
+		lWOutput += lPair.output;
+	    }
+
+	    $('#output-content').append('<span class="item-output" title=\"' + lWInput + '\">' + lWOutput + '</span>');
+
+	    if (i < lPairs.length &&
+		lPairs[i].output === ' ') {
+		$('#output-content').append('<span> </span>');
+	    }
+	}
     }
 
     this.changeAlphaFont = function() {
@@ -996,5 +1043,20 @@ function frequency_analyzer(iTextInput, iFont) {
     this.clickSumButton = function() {
 	this.mShowSum = !this.mShowSum;
 	this.applySumButton();
+    }
+
+    this.applyOutputButton = function() {
+	if (this.mOutputFull) {
+	    $('#root').addClass('full-output');
+	    $('#output-button').text('Réduire le texte');
+	} else {
+	    $('#root').removeClass('full-output');
+	    $('#output-button').text('Afficher le texte en entier');
+	}
+    }
+
+    this.clickOutputButton = function() {
+	this.mOutputFull = !this.mOutputFull;
+	this.applyOutputButton();
     }
 }
