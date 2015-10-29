@@ -36,6 +36,7 @@ function frequency_analyzer(iTextInput, iFont) {
 	this.applySectionButtonInput();
 	this.applySectionButtonFrq();
 	this.applySectionButtonRef();
+	this.applySectionButtonSum();
 	this.applySectionButtonSub();
 	this.applySectionButtonOutput();
 	this.applySumButton();
@@ -83,6 +84,10 @@ function frequency_analyzer(iTextInput, iFont) {
 
 	$('#section-button-sub').click(function() {
 	    that.clickSectionButtonSub();
+	});
+
+	$('#section-button-sum').click(function() {
+	    that.clickSectionButtonSum();
 	});
 
 	$('#section-button-output').click(function() {

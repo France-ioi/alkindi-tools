@@ -110,7 +110,6 @@ body {
 }
 
 .chart-sum {
-    display: none;
     width: 770px;
     height: 300px;
 }
@@ -264,7 +263,8 @@ body {
 }
 
 .minify .generate-wrapper-sub,
-.minify .sub-input {
+.minify .sub-input,
+.minify .sub-wrapper {
     display: none;
 }
 
