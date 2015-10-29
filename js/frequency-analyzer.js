@@ -84,7 +84,11 @@ function frequency_analyzer(iTextInput, iFont) {
         this.applySumButton();
         this.applyOutputButton();
 
-        $('textarea#textarea-input').val(this.mTextInput);
+        // Chrome is very slow when using textareas, so we only use textareas when editing
+        $('div#textarea-input').html(this.mTextInput);
+        $('div#textarea-input').click(function() {
+           that.clickInput();
+        });
 
         var that = this;
 
@@ -142,6 +146,21 @@ function frequency_analyzer(iTextInput, iFont) {
 
         $('#output-button').click(function() {
             that.clickOutputButton();
+        });
+    }
+
+    this.clickInput = function() {
+        var input = $('#textarea-input').html();
+        $("#textarea-container").html('<textarea id="textarea-input" class="textarea-input">' + input + '</textarea>');
+        var that = this;
+        that.changeAlphaFont();
+        $("textarea#textarea-input").blur(function() {
+           var input = $('#textarea-input').val();
+           $("#textarea-container").html('<div id="textarea-input" class="textarea-input output-content">' + input + '</div>');
+           that.changeAlphaFont();
+            $('div#textarea-input').click(function() {
+              that.clickInput();
+           });
         });
     }
 
@@ -474,8 +493,7 @@ function frequency_analyzer(iTextInput, iFont) {
     }
 
     this.clickApplyInput = function() {
-        var lTextInput       = $('textarea#textarea-input').val();
-        $('textarea#textarea-input').hide(); // For some reason, on chrome it is extremely slow otherwise (if we clicked on the textarea before)
+        var lTextInput       = $('#textarea-input').html();
 
         var lWithSpace       = document.getElementById('optionWithSpace').checked;
         var lWithPunctuation = document.getElementById('optionWithPunctuation').checked;
@@ -504,7 +522,6 @@ function frequency_analyzer(iTextInput, iFont) {
 //        this.updateChartSum();
 //        this.displayOutput(this.mTokens);
         this.updateSubFromRef();
-        $('textarea#textarea-input').show();
     }
 
     this.updateChartText = function(iFont) {
@@ -834,9 +851,9 @@ function frequency_analyzer(iTextInput, iFont) {
         var lFont = this.mFont;
 
         if (lFont === 'alien') {
-            $('textarea#textarea-input').css('font-family', "alien");
+            $('#textarea-input').css('font-family', "alien");
         } else {
-            $('textarea#textarea-input').css('font-family', "inherit");
+            $('#textarea-input').css('font-family', "inherit");
         }
     }
 
