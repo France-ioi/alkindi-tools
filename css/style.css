@@ -105,13 +105,13 @@ body {
 
 .chart-text,
 .chart-ref {
-    width: 600px;
+    width: 770px;
     height: 300px;
 }
 
 .chart-sum {
     display: none;
-    width: 600px;
+    width: 770px;
     height: 300px;
 }
 
