@@ -154,6 +154,7 @@ function frequency_analyzer(iTextInput, iFont) {
         $("#textarea-container").html('<textarea id="textarea-input" class="textarea-input">' + input + '</textarea>');
         var that = this;
         that.changeAlphaFont();
+        $("textarea#textarea-input").focus();
         $("textarea#textarea-input").blur(function() {
            var input = $('#textarea-input').val();
            $("#textarea-container").html('<div id="textarea-input" class="textarea-input output-content">' + input + '</div>');
