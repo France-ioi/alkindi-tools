@@ -22,37 +22,21 @@ if (!Array.prototype.indexOf)
 }
 
 function MyMap() {
-    this.keys = [];
-    this.values = [];
+    this.values = {};
 }
 
 MyMap.prototype.set = function(iKey, iValue) {
-    var lFound = false;
-    for (var i = 0; i < this.keys.length; ++i) {
-	var lKey = this.keys[i];
-	if (lKey === iKey) {
-	    this.values[i] = iValue;
-	    lFound = true;
-	    break;
-	}
-    }
-    if (!lFound) {
-	this.keys.push(iKey);
-	this.values.push(iValue);
-    }
+   this.values[iKey] = iValue;
 };
 
 MyMap.prototype.get = function(iKey) {
-    var lIndex = this.keys.indexOf(iKey);
-    return this.values[lIndex];
+   return this.values[iKey];
 };
 
 MyMap.prototype.forEach = function(f) {
-    for (var i = 0; i < this.keys.length; ++i) {
-	var lKey   = this.keys[i];
-	var lValue = this.values[i];
-	f(lValue, lKey);
-    }
+   for (var iKey in this.values) {
+      f(this.values[iKey], iKey);
+   }
 };
 
 function frequency_analyzer(iTextInput, iFont) {
