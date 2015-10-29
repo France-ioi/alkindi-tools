@@ -241,6 +241,11 @@ body {
     display: none;
 }
 
+.frq-ref-language {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
 .minify .frq-ref-language {
     display: none;
 }
