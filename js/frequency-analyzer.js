@@ -27,6 +27,7 @@ function frequency_analyzer(iTextInput, iFont) {
     this.mMinifyOutput = false;
     this.mShowSum = false;
     this.mOutputFull = false;
+    this.mNewCharSub = [];
 
     this.init = function() {
 	this.initRefLang();
@@ -153,7 +154,14 @@ function frequency_analyzer(iTextInput, iFont) {
 	return lContent;
     }
 
-
+    this.contains = function(a, obj) {
+	for (var i = 0; i < a.length; i++) {
+            if (a[i] === obj) {
+		return true;
+            }
+	}
+	return false;
+    }
 
     this.initRefLang = function() {
 	// src https://fr.wikipedia.org/wiki/Fr%C3%A9quence_d%27apparition_des_lettres_en_fran%C3%A7ais
@@ -669,6 +677,8 @@ function frequency_analyzer(iTextInput, iFont) {
 	this.subReplace(lSrc.key, lDstValue);
 	this.subReplace(lDst.key, lSrcValue);
 
+	this.mNewCharSub = [lSrcValue, lDstValue];
+
 	this.updateChartSum();
 	this.updateTokensSub(this.mTokens, this.mSub);
 	this.displayOutput(this.mTokens);
@@ -727,16 +737,28 @@ function frequency_analyzer(iTextInput, iFont) {
 		lPair = lPairs[i];
 
 		lWInput  += lPair.input;
-		lWOutput += lPair.output;
+		var lClass = "";
+		if (this.contains(this.mNewCharSub, lPair.output)) {
+		    lClass = "pulse";
+		}
+		if (!this.mOptions.withUpperCase &&
+		    this.contains(this.mNewCharSub, lPair.output.toLowerCase())) {
+		    lClass = "pulse";
+		}
+		lWOutput += '<span class="char-output' + " " + lClass + '">' + lPair.output + "</span>";
 	    }
 
-	    $('#output-content').append('<span class="item-output" title=\"' + lWInput + '\">' + lWOutput + '</span>');
+	    $('#output-content').append('<span class="item-output" title="' + lWInput + '">' + lWOutput + '</span>');
 
 	    if (i < lPairs.length &&
 		lPairs[i].output === ' ') {
 		$('#output-content').append('<span> </span>');
 	    }
 	}
+	var pulse = function() {
+	    $('.pulse').css('background-color', "transparent");
+	};
+	setTimeout(pulse, 150);
     }
 
     this.changeAlphaFont = function() {

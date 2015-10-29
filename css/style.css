@@ -331,3 +331,13 @@ body {
     font-size: 16px;
     cursor: default;
 }
+
+.char-output {
+    -moz-transition: all 1s linear;
+    -webkit-transition: all 1s linear;
+    transition: all 1s linear;
+}
+
+.pulse {
+    background-color: red;
+}
