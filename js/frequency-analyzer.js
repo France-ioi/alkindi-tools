@@ -757,32 +757,13 @@ function frequency_analyzer(iTextInput, iFont) {
 		lWOutput += '<span class="char-output' + " " + lClass + '">' + lPair.output + "</span>";
 	    }
 
-	    $('#output-content').append('<span class="item-output" title="' + lWInput + '">' + lWOutput + '</span>');
+	    $('#output-content').append('<span class="item-output" data-title="' + lWInput + '">' + lWOutput + '</span>');
 
 	    if (i < lPairs.length &&
 		lPairs[i].output === ' ') {
 		$('#output-content').append('<span> </span>');
 	    }
 	}
-
-//	    $('.item-output').tooltip({
-//		tooltipClass: "output-tooltip",
-//		position: {
-//		    my: "left+15 center",
-//		    at: "right center"
-//		}
-//	    });
-
-
-//	$(function() {
-//	    $('.item-output').tooltip({
-//		tooltipClass: "output-tooltip",
-//		position: {
-//		    my: "left bottom"
-//		}
-//	    });
-//	});
-
 	var pulse = function() {
 	    $('.pulse').css('background-color', "transparent");
 	};
