@@ -322,9 +322,11 @@ body {
     display: none;
 }
 
+.full-output .minify .output-content,
 .minify .output-content {
     border: 0 solid transparent;
     height: 60px;
+    overflow-y: auto;
 }
 
 .item-output {
@@ -339,5 +341,5 @@ body {
 }
 
 .pulse {
-    background-color: red;
+    background-color: #7cb5ec;
 }
