@@ -72,6 +72,7 @@ function frequency_analyzer(iTextInput, iFont) {
 
     this.init = function() {
         this.initRefLang();
+        this.initIsCharFunctions();
         this.changeFrqRefLanguage();
         this.changeAlphaFont();
         this.applySectionButtonInput();
@@ -142,6 +143,17 @@ function frequency_analyzer(iTextInput, iFont) {
         $('#output-button').click(function() {
             that.clickOutputButton();
         });
+    }
+
+    this.initIsCharFunctions = function() {
+         var charTypes = ["AlphaLower", "AlphaUpper", "Digit", "AccentLower", "AccentUpper", "Punct", "Space"];
+         for (var iCharType = 0; iCharType < charTypes.length; iCharType++) {
+            var charType = charTypes[iCharType];
+            this["is" + charType] = {};
+           for (var iChar = 0; iChar < this["mArray" + charType].length; ++iChar) {
+               this["is" + charType][this["mArray" + charType][iChar]] = true;
+           }
+         }
     }
 
 
@@ -349,16 +361,6 @@ function frequency_analyzer(iTextInput, iFont) {
             lWithUpperCase   = this.mOptions.withUpperCase;
         }
 
-        isPunct = {};
-        for (var iChar = 0; iChar < this.mArrayPunct.length; ++iChar) {
-            isPunct[this.mArrayPunct[iChar]] = true;
-        }
-
-        isDigit = {};
-        for (var iChar = 0; iChar < this.mArrayDigit.length; ++iChar) {
-            isDigit[this.mArrayDigit[iChar]] = true;
-        }
-
         var lTokens = new Array();
         for (var i = 0, len = iText.length; i < len; i++) {
             var lRef = iText.charAt(i);
@@ -371,7 +373,7 @@ function frequency_analyzer(iTextInput, iFont) {
                 lMute = true;
             }
 
-            if (!lWithPunctuation && (isPunct[lRef] != undefined)) {
+            if (!lWithPunctuation && (this.isPunct[lRef] != undefined)) {
                 lMute = true;
             }
 
@@ -382,7 +384,7 @@ function frequency_analyzer(iTextInput, iFont) {
                 }
             }
 
-            if (!lWithDigit && (isDigit[lRef] != undefined)) {
+            if (!lWithDigit && (this.isDigit[lRef] != undefined)) {
                 lMute = true;
             }
 
@@ -473,6 +475,7 @@ function frequency_analyzer(iTextInput, iFont) {
 
     this.clickApplyInput = function() {
         var lTextInput       = $('textarea#textarea-input').val();
+        $('textarea#textarea-input').hide(); // For some reason, on chrome it is extremely slow otherwise (if we clicked on the textarea before)
 
         var lWithSpace       = document.getElementById('optionWithSpace').checked;
         var lWithPunctuation = document.getElementById('optionWithPunctuation').checked;
@@ -501,6 +504,7 @@ function frequency_analyzer(iTextInput, iFont) {
 //        this.updateChartSum();
 //        this.displayOutput(this.mTokens);
         this.updateSubFromRef();
+        $('textarea#textarea-input').show();
     }
 
     this.updateChartText = function(iFont) {
@@ -654,7 +658,7 @@ function frequency_analyzer(iTextInput, iFont) {
                                    lCxAlpha, lCy, that.mArrayAlphaLower.length,
                                    'AlphaLower',
                                    function(c) {
-                                       return that.mArrayAlphaLower.indexOf(c) >= 0;
+                                       return that.isAlphaLower[c];
                                    });
         lCy += lCyInc;
 
@@ -663,7 +667,7 @@ function frequency_analyzer(iTextInput, iFont) {
                                        lCxAlpha, lCy, that.mArrayAlphaUpper.length,
                                        'AlphaUpper',
                                        function(c) {
-                                           return that.mArrayAlphaUpper.indexOf(c) >= 0;
+                                           return that.isAlphaUpper[c];
                                        });
             lCy += lCyInc;
         }
@@ -673,7 +677,7 @@ function frequency_analyzer(iTextInput, iFont) {
                                        lCxAccent, lCy, that.mArrayAccentLower.length,
                                        'AccentLower',
                                        function(c) {
-                                           return that.mArrayAccentLower.indexOf(c) >= 0;
+                                           return that.isAccentLower[c];
                                        });
             lCy += lCyInc;
         }
@@ -684,7 +688,7 @@ function frequency_analyzer(iTextInput, iFont) {
                                            lCxAccent, lCy, that.mArrayAccentUpper.length,
                                            'AccentUpper',
                                            function(c) {
-                                               return that.mArrayAccentUpper.indexOf(c) >= 0;
+                                               return that.isAccentUpper[c];
                                            });
                 lCy += lCyInc;
             }
@@ -695,7 +699,7 @@ function frequency_analyzer(iTextInput, iFont) {
                                        lCxDigit, lCy, that.mArrayDigit.length,
                                        'Digit',
                                        function(c) {
-                                           return that.mArrayDigit.indexOf(c) >= 0;
+                                           return that.isDigit[c];
                                        });
             lCy += lCyInc;
         }
@@ -705,7 +709,7 @@ function frequency_analyzer(iTextInput, iFont) {
                                        lCxPunct, lCy, that.mArrayPunct.length,
                                        'Punctuation',
                                        function(c) {
-                                           return that.mArrayPunct.indexOf(c) >= 0;
+                                           return that.isPunct[c];
                                        });
             lCy += lCyInc;
         }
@@ -715,7 +719,7 @@ function frequency_analyzer(iTextInput, iFont) {
                                        lCxSpace, lCy, that.mArraySpace.length,
                                        'Space',
                                        function(c) {
-                                           return that.mArraySpace.indexOf(c) >= 0;
+                                           return that.isSpace[c];
                                        });
             lCy += lCyInc;
         }
