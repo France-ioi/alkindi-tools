@@ -1,4 +1,8 @@
 @font-face {
     font-family: alien;
-    src: url(../fonts/alien.ttf);
+    src: url('../fonts/alien.eot');
+    src: url('../fonts/alien.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/alien.woff') format('woff'),
+         url('../fonts/alien.ttf') format('truetype');
 }
+
