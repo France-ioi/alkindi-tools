@@ -365,6 +365,16 @@ function frequency_analyzer(iTextInput, iFont) {
 	    lWithUpperCase   = this.mOptions.withUpperCase;
 	}
 
+	isPunct = {};
+	for (var iChar = 0; iChar < this.mArrayPunct.length; ++iChar) {
+	    isPunct[this.mArrayPunct[iChar]] = true;
+	}
+
+	isDigit = {};
+	for (var iChar = 0; iChar < this.mArrayDigit.length; ++iChar) {
+	    isDigit[this.mArrayDigit[iChar]] = true;
+	}
+
 	var lTokens = new Array();
 	for (var i = 0, len = iText.length; i < len; i++) {
 	    var lRef = iText.charAt(i);
@@ -377,7 +387,7 @@ function frequency_analyzer(iTextInput, iFont) {
 		lMute = true;
 	    }
 
-	    if (!lWithPunctuation && this.mArrayPunct.indexOf(lRef) >= 0) {
+	    if (!lWithPunctuation && (isPunct[lRef] != undefined)) {
 		lMute = true;
 	    }
 
@@ -388,7 +398,7 @@ function frequency_analyzer(iTextInput, iFont) {
 		}
 	    }
 
-	    if (!lWithDigit && this.mArrayDigit.indexOf(lRef) >= 0) {
+	    if (!lWithDigit && (isDigit[lRef] != undefined)) {
 		lMute = true;
 	    }
 
