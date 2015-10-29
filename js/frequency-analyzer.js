@@ -1,8 +1,42 @@
+function MyMap() {
+    this.keys = [];
+    this.values = [];
+}
+
+MyMap.prototype.set = function(iKey, iValue) {
+    var lFound = false;
+    for (var i = 0; i < this.keys.length; ++i) {
+	var lKey = this.keys[i];
+	if (lKey === iKey) {
+	    this.values[i] = iValue;
+	    lFound = true;
+	    break;
+	}
+    }
+    if (!lFound) {
+	this.keys.push(iKey);
+	this.values.push(iValue);
+    }
+};
+
+MyMap.prototype.get = function(iKey) {
+    var lIndex = this.keys.indexOf(iKey);
+    return this.values[lIndex];
+};
+
+MyMap.prototype.forEach = function(f) {
+    for (var i = 0; i < this.keys.length; ++i) {
+	var lKey   = this.keys[i];
+	var lValue = this.values[i];
+	f(lValue, lKey);
+    }
+};
+
 function frequency_analyzer(iTextInput, iFont) {
     this.mTextInput = iTextInput;
     this.mFont = iFont;
     this.mLimitRef = 18;
-    this.mMapLang = new Map();
+    this.mMapLang = new MyMap();
     this.mOptions = null;
     this.mObjects = null;
     this.mKeys = null;
@@ -178,7 +212,7 @@ function frequency_analyzer(iTextInput, iFont) {
 
     this.initRefLang = function() {
 	// src https://fr.wikipedia.org/wiki/Fr%C3%A9quence_d%27apparition_des_lettres_en_fran%C3%A7ais
-	var lFr = new Map();
+	var lFr = new MyMap();
 	lFr.set('a', 7.637);
 	lFr.set('b', 0.901);
 	lFr.set('c', 3.260);
@@ -209,7 +243,7 @@ function frequency_analyzer(iTextInput, iFont) {
 	this.mMapLang.set("fr", lFr);
 
 	// src: https://en.wikipedia.org/wiki/Letter_frequency
-	var lEn = new Map();
+	var lEn = new MyMap();
 	lEn.set('a', 11.602);
 	lEn.set('b', 4.702);
 	lEn.set('c', 3.511);
@@ -367,7 +401,7 @@ function frequency_analyzer(iTextInput, iFont) {
     }
 
     this.computeMapFrq = function(iTokens) {
-	var lMap = new Map();
+	var lMap = new MyMap();
 	var lSize = 0;
 	var lTokens = iTokens.tokens;
 
@@ -591,7 +625,7 @@ function frequency_analyzer(iTextInput, iFont) {
 	    }
 	});
 	this.mSub = new Array();
-	this.mMapSub = new Map();
+	this.mMapSub = new MyMap();
 	var lCy = 80;
 	var lCxAlpha = 330;
 	var lCxDigit = 130;
@@ -700,7 +734,7 @@ function frequency_analyzer(iTextInput, iFont) {
     this.updateTokensSub = function(iTokens, iMap) {
 	if (iTokens != null) {
 	    var lTokens = iTokens.tokens;
-	    var lMap = new Map();
+	    var lMap = new MyMap();
 	    for (var i = 0; i < iMap.length; ++i) {
 		lMap.set(iMap[i].key, iMap[i].value);
 	    }
@@ -811,7 +845,7 @@ function frequency_analyzer(iTextInput, iFont) {
 	this.sortFrq(lFrq, false);
 
 
-	var lMap = new Map();
+	var lMap = new MyMap();
 	for (var i = 0; i < lFrq.length && i < lRef.length; ++i) {
 	    var lItemFrq = lFrq[i];
 	    var lItemRef = lRef[i];
