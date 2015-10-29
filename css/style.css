@@ -343,3 +343,19 @@ body {
 .pulse {
     background-color: #7cb5ec;
 }
+
+.output-tooltip {
+    display: inline-block;
+    background-color: #222;
+    font-size: 16px;
+    font-family: 'alien';
+    color: white;
+    padding: 10px;
+/*    cursor: default;*/
+}
+
+/*
+.ui-helper-hidden-accessible {
+    display: none;
+}
+*/

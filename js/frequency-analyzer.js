@@ -102,6 +102,13 @@ function frequency_analyzer(iTextInput, iFont) {
     var that = this;
 
     this.generateChartsContent = function(iFont, iKeys, iData) {
+	var lMax = 0;
+	for (var i = 0; i < iData.length; ++i) {
+	    var lVal = iData[i];
+	    lMax = lMax < lVal ? lVal : lMax;
+	}
+	lMax *= 1.1;
+
 	var lContent = {
 	    legend: {
 		enabled: false
@@ -123,6 +130,7 @@ function frequency_analyzer(iTextInput, iFont) {
 		max: that.mLimitRef
             },
 	    yAxis: {
+		max: lMax,
 		title: {
 		    text: ''
 		}
@@ -738,11 +746,12 @@ function frequency_analyzer(iTextInput, iFont) {
 
 		lWInput  += lPair.input;
 		var lClass = "";
-		if (this.contains(this.mNewCharSub, lPair.output)) {
-		    lClass = "pulse";
-		}
-		if (!this.mOptions.withUpperCase &&
-		    this.contains(this.mNewCharSub, lPair.output.toLowerCase())) {
+		if (
+		    this.contains(this.mNewCharSub, lPair.output)
+		    ||
+		    (!this.mOptions.withUpperCase &&
+		     this.contains(this.mNewCharSub, lPair.output.toLowerCase()))
+		   ) {
 		    lClass = "pulse";
 		}
 		lWOutput += '<span class="char-output' + " " + lClass + '">' + lPair.output + "</span>";
@@ -755,6 +764,25 @@ function frequency_analyzer(iTextInput, iFont) {
 		$('#output-content').append('<span> </span>');
 	    }
 	}
+
+//	    $('.item-output').tooltip({
+//		tooltipClass: "output-tooltip",
+//		position: {
+//		    my: "left+15 center",
+//		    at: "right center"
+//		}
+//	    });
+
+
+//	$(function() {
+//	    $('.item-output').tooltip({
+//		tooltipClass: "output-tooltip",
+//		position: {
+//		    my: "left bottom"
+//		}
+//	    });
+//	});
+
 	var pulse = function() {
 	    $('.pulse').css('background-color', "transparent");
 	};
@@ -936,6 +964,18 @@ function frequency_analyzer(iTextInput, iFont) {
 	    lData2.push(lValue2);
 	}
 
+	var lMax = 0;
+	for (var i = 0; i < lData1.length; ++i) {
+	    var lVal = lData1[i];
+	    lMax = lMax < lVal ? lVal : lMax;
+	}
+	for (var i = 0; i < lData2.length; ++i) {
+	    var lVal = lData2[i];
+	    lMax = lMax < lVal ? lVal : lMax;
+	}
+	lMax *= 1.1;
+
+
 	var lContent = {
 	    legend: {
 		enabled: false
@@ -952,6 +992,7 @@ function frequency_analyzer(iTextInput, iFont) {
 		max: that.mLimitRef
             },
 	    yAxis: {
+		max: lMax,
 		title: {
 		    text: ''
 		}
