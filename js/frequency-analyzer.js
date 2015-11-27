@@ -937,9 +937,12 @@ function frequency_analyzer(iTextInput, iFont) {
             lKeys.push.apply(lKeys, this.mArraySpace);
         }
 
+	var that = this;
         var lMark = new Array();
         lMap.forEach(function(value, key) {
-            lMark.push(value);
+	    if (that.isInSubRange(key)) {
+		lMark.push(value);
+	    }
         });
         var lArray = new Array();
         for (var i = 0; i < lKeys.length; ++i) {
@@ -977,6 +980,31 @@ function frequency_analyzer(iTextInput, iFont) {
             }
         }
         return '_';
+    }
+
+    this.isInSubRange = function(key) {
+	if (this.isAlphaLower[key] != undefined) {
+	    return true;
+	}
+        if (this.mOptions.withSpace && (this.isSpace[key] != undefined)) {
+            return true;
+        }
+        if (this.mOptions.withPunctuation && (this.isPunct[key] != undefined)) {
+            return true;
+        }
+        if (this.mOptions.withAccent && (this.isAccentLower[key] != undefined)) {
+            return true;
+        }
+        if (this.mOptions.withDigit && (this.isPunct[key] != undefined)) {
+            return true;
+        }
+        if (this.mOptions.withUpperCase && (this.isAlphaUpper[key] != undefined)) {
+            return true;
+        }
+        if (this.mOptions.withUpperCase && this.mOptions.withAccent && (this.isAccentUpper[key] != undefined)) {
+            return true;
+        }
+	return false;
     }
 
     this.updateChartSum = function() {
